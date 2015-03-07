@@ -1,5 +1,10 @@
-using TradingLogic
-using Base.Test
+using FactCheck
 
-# write your own tests here
-@test 1 == 1
+#include("signals.jl")
+include("orders.jl")
+#include("exchange_backtest.jl")
+
+# testing built-in trading strategies
+#include("teststrategy_luxor.jl")
+
+#exitstatus()
