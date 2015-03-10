@@ -7,7 +7,7 @@ function neworderid(trig::ASCIIString)
 end
 
 """
-Prepare new order from `targ` (`(poschg::Int64, Vector[stopprice, limitprice]`)
+Prepare new order from `targ` (`(poschg::Int64, Vector[limitprice,stopprice]`)
 and trigger-string `trig`.
 Note: this function prepares limit and market orders for submission.
 Stop-part of stoplimit orders is handled at the software level
@@ -65,7 +65,7 @@ end
 """
 Order handling for backtesting and live trading.
 Input:
-- target `targ` as `(poschg::Int64, Vector[stopprice, limitprice]`;
+- target `targ` as `(poschg::Int64, Vector[limitprice, stopprice]`;
 - current/instantaneous price `pnow`
 - current time `tnow`; for backtest, the time corresponding to `targ`
 (i.e. the current OHLC step/bar time).

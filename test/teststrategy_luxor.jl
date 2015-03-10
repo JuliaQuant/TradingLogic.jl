@@ -12,7 +12,7 @@ facts("Luxor strategy backtesting") do
       blotter, true, s_ohlc, s_pnow, 0,
       TradingLogic.luxortarget, 10, 40, 10.0, 100)
 
-    for i in 51:100
+    for i in 51:200
       push!(s_ohlc, ohlc[i-50:i])
       #println(blot)
 

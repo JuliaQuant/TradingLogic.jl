@@ -11,13 +11,17 @@ end
 
 """
 Target position and stop, limit prices (if any) for luxor strategy.
-Returns `(poschg::Int64, Vector[stopprice, limitprice]`.
+Returns `(poschg::Int64, Vector[limitprice, stopprice]`.
 """
 function luxorposlogic(mktstate::Symbol,
                        mktchgh::Float64, mktchgl::Float64, pthresh::Float64,
                        targetqty::Int64,
                        position_actual_mut::Vector{Int64})
   posact = position_actual_mut[1]
+
+  ### TODO: accommodate partial orders, include in tests
+  ### e.g. if position > 0 but less than targetqty
+
   @match (posact == 0, mktstate) begin
     # enter long position
     (true, :trendup) => (targetqty, [mktchgh + pthresh, mktchgh])
@@ -26,7 +30,7 @@ function luxorposlogic(mktstate::Symbol,
     # enter short position
     (true, :trenddown) => (-targetqty, [mktchgl - pthresh, mktchgl])
     # exit from short position
-    (false, :trendup), if posact < 0 end => (posact, Array(Float64, 0))
+    (false, :trendup), if posact < 0 end => (-posact, Array(Float64, 0))
     # no match among action-triggering contidions above
     othercase => (0, Array(Float64, 0))
   end
