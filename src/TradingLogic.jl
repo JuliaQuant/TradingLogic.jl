@@ -18,6 +18,7 @@ include("types.jl")
 include("errorhandl.jl")
 include("exchange.jl")
 include("orderhandl.jl")
+include("performance.jl")
 
 # specific trading strategy examples
 include("strategies/luxor.jl")
