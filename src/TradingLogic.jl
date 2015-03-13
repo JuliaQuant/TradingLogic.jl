@@ -1,13 +1,24 @@
+if VERSION < v"0.4-"
+    using Dates
+else
+    using Base.Dates
+end
+
+using Reactive, Match, FinancialSeries, MarketTechnicals
+
 module TradingLogic
 
-# doc-strings
 using Docile
 
-using Dates ### TODO (later) remove when Julia 0.4 is stable
-using Reactive, Match
-using TimeSeries, FinancialSeries
-using MarketTechnicals
+if VERSION < v"0.4-"
+    using Dates
+else
+    using Base.Dates
+end
 
+using Reactive, Match, FinancialSeries, MarketTechnicals
+
+# doc-strings
 @document
 
 export runtrading!
