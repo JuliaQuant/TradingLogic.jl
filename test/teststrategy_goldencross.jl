@@ -1,59 +1,51 @@
 facts("Goldencross trading logic") do
   context("Market state") do
-    fm = TradingLogic.luxormktstate
+    fm = TradingLogic.goldencrossmktstate
     @fact fm(120.0, 50.0) => :trendup
     @fact fm(20.0, 50.0) => :trenddown
     @fact fm(20.0, 20.0) => :crosspoint
   end
   context("Target position") do
     tq = 100
-    ft(mkt, posnow) = TradingLogic.luxorposlogic(
-      mkt, 155.0, 150.0, 10.0, tq, [posnow])
+    ft(mkt, posnow) = TradingLogic.goldencrossposlogic(
+      mkt, tq, [posnow])
     stlim = Array(Float64, 0)
 
-    # enter long
-    @fact ft(:trendup, 0) => (tq, [165.0, 155.0])
-    # enter long partial fill
+    # up, zero position
+    @fact ft(:trendup, 0) => (tq, stlim)
+    # up, position less than target (e.g. partial fill)
     p = int(tq/2)
-    @fact ft(:trendup, p) => (tq - p, [165.0, 155.0])
+    @fact ft(:trendup, p) => (tq - p, stlim)
 
-    # enter short
-    @fact ft(:trenddown, 0) => (-tq, [140.0, 150.0])
-    # enter short partial fill
-    p = -int(tq/2)
-    @fact ft(:trenddown, p) => (-abs(tq-p), [140.0, 150.0])
+    # down: sell
+    @fact ft(:trenddown, tq) => (-tq, stlim)
+    @fact ft(:trenddown, p) => (-p, stlim)
+    # down: nothing left to sell
+    @fact ft(:trenddown, 0) => (0, stlim)
 
     # hold position in line with the market state
     @fact ft(:trendup, tq) => (0, stlim)
-    @fact ft(:trenddown, -tq) => (0, stlim)
-
-    # exit long position
-    @fact ft(:trenddown, tq) => (-tq, stlim)
-    p = int(tq/2)
-    @fact ft(:trenddown, p) => (-p, stlim)
-
-    # exit short position
-    @fact ft(:trendup, -tq) => (tq, stlim)
-    p = -int(tq/2)
-    @fact ft(:trendup, p) => (abs(p), stlim)
 
     # crosspoint: wait
-    @fact ft(:crosspoint, 0) => (0, stlim)
-    @fact ft(:crosspoint, -tq) => (0, stlim)
     @fact ft(:crosspoint, tq) => (0, stlim)
+
+    # negative position: should not happen, close it
+    @fact ft(:trendup, -5) => (5, stlim)
+    @fact ft(:trenddown, -5) => (5, stlim)
+    @fact ft(:crosspoint, -5) => (5, stlim)
   end
 end
 
-facts("Luxor strategy backtesting") do
-  context("GBPUSD vs. quantstrat") do
-    mafast = 10
-    maslow = 40
+facts("Goldencross strategy backtesting") do
+  context("SP500 daily vs. zipline") do
+    mafast = 50
+    maslow = 200
     targetqty = 100
-    pthresh = 10.0
 
     ### TODO change data input
 
     s_ohlc = Reactive.Input(ohlc[1:maslow])
+
     # backtest at close price
     s_pnow = Reactive.lift(s -> values(s["Close"])[end],
                            Float64, s_ohlc)
@@ -61,7 +53,7 @@ facts("Luxor strategy backtesting") do
 
     s_status = TradingLogic.runtrading!(
       blotter, true, s_ohlc, s_pnow, 0,
-      TradingLogic.luxortarget, mafast, maslow, pthresh, targetqty)
+      TradingLogic.goldencrosstarget, targetqty, mafast, maslow)
     for i in (maslow + 1):length(ohlc)
       push!(s_ohlc, ohlc[i-maslow:i])
       #println(ohlc[i]["Close"])

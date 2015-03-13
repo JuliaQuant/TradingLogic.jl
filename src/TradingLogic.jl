@@ -21,6 +21,7 @@ include("orderhandl.jl")
 include("performance.jl")
 
 # specific trading strategy examples
+include("strategies/goldencross.jl")
 include("strategies/luxor.jl")
 
 """

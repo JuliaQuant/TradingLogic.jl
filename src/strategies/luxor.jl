@@ -1,16 +1,27 @@
 "Market state in luxor strategy"
 function luxormktstate(mafast::Float64, maslow::Float64)
-  # @match is overkill here but keeping it as a template
-  @match (mafast >= maslow) begin
-    true => :trendup
-    false => :trenddown
-    # reminds to always provide an unmatched option (no Nothing)
-    _ => :undefined
+  if mafast > maslow
+    return :trendup
   end
+  if mafast < maslow
+    return :trenddown
+  end
+  # this would be rare
+  return :crosspoint
 end
+# function luxormktstate(mafast::Float64, maslow::Float64)
+#   # @match is overkill here but keeping it as a template
+#   @match (mafast >= maslow) begin
+#     true => :trendup
+#     false => :trenddown
+#     # reminds to always provide an unmatched option (no Nothing)
+#     _ => :undefined
+#   end
+# end
 
 """
 Target position and stop, limit prices (if any) for luxor strategy.
+...
 Returns `(poschg::Int64, Vector[limitprice, stopprice]`.
 """
 function luxorposlogic(mktstate::Symbol,
@@ -18,9 +29,6 @@ function luxorposlogic(mktstate::Symbol,
                        targetqty::Int64,
                        position_actual_mut::Vector{Int64})
   posact = position_actual_mut[1]
-
-  ### TODO: accommodate partial orders, include in tests
-  ### e.g. if position > 0 but less than targetqty
 
   @match (posact == 0, mktstate) begin
     # enter long position
@@ -31,17 +39,27 @@ function luxorposlogic(mktstate::Symbol,
     (true, :trenddown) => (-targetqty, [mktchgl - pthresh, mktchgl])
     # exit from short position
     (false, :trendup), if posact < 0 end => (-posact, Array(Float64, 0))
+
+    # partial order fill: continue advancing position (buy/sell more)
+    (false, :trendup), if 0 < posact < targetqty end => (targetqty-posact, [mktchgh + pthresh, mktchgh])
+    (false, :trenddown), if 0 > posact > -targetqty end => (-abs(targetqty-posact), [mktchgl - pthresh, mktchgl])
+
+    # position over target: move back to targetqty
+    (false, :trendup), if posact > targetqty end => (-(posact-targetqty), Array(Float64, 0))
+    (false, :trenddown), if posact < -targetqty end => (abs(posact-targetqty), Array(Float64, 0))
+
     # no match among action-triggering contidions above
     othercase => (0, Array(Float64, 0))
   end
 end
 
-"Target signal with `luxorposlogic` value for luxor strategy."
+"Target signal for luxor strategy."
 function luxortarget{M}(s_ohlc::Input{FinancialTimeSeries{Float64,2,M}},
                         position_actual_mut::Vector{Int64},
                         nsma_fast::Int64, nsma_slow::Int64,
                         pthreshold::Float64, targetqty::Int64)
   posact = position_actual_mut[1]
+  targetqty > 0 || error("target quantity must be positive")
 
   # signals updating at each timestep (aka OHLC bar)
   s_close = lift(s -> values(s["Close"])[end], Float64, s_ohlc)
@@ -65,6 +83,6 @@ function luxortarget{M}(s_ohlc::Input{FinancialTimeSeries{Float64,2,M}},
                                                pthreshold, targetqty,
                                                position_actual_mut),
                   s_mktstate, s_mktchg_high, s_mktchg_low)
-  # signal tuple to pass to the order processing function
+  # targeting tuple to pass to the order processing function
   return s_target
 end

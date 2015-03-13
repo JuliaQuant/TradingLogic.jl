@@ -9,6 +9,7 @@ facts("Trading metrics from transactions blotter") do
     blotter[DateTime(2015,1,1,0)] = (a1, p1)
     blotter[DateTime(2015,1,1,1)] = (a2, p2)
     blotter[DateTime(2015,1,2)] = (-(a1 + a2), pexit)
+    pnlfin = a1*(p2 - p1) + (a1 + a2)*(pexit - p2)
 
     metr = [:PnL]
     vt, perfm = TradingLogic.tradeperf(blotter, metr)
@@ -16,8 +17,8 @@ facts("Trading metrics from transactions blotter") do
     @fact length(vt) => ntrans
 
     @fact length(perfm[:PnL]) => ntrans
-    @fact perfm[:PnL] => roughly([0.0, a1*(p2 - p1),
-                                 a1*(p2 - p1) + (a1 + a2)*(pexit - p2)])
+    @fact perfm[:PnL] => roughly([0.0, a1*(p2 - p1), pnlfin])
+    @fact TradingLogic.tradepnlfinal(blotter) => roughly(pnlfin)
   end
   context("Short enter and exit") do
     blotter = TradingLogic.emptyblotter()
@@ -28,6 +29,7 @@ facts("Trading metrics from transactions blotter") do
 
     blotter[DateTime(2015,1,1,0)] = (-a, pent)
     blotter[DateTime(2015,1,1,1)] = (a, pexit)
+    pnlfin = -a*(pexit - pent)
 
     metr = [:PnL]
     vt, perfm = TradingLogic.tradeperf(blotter, metr)
@@ -35,7 +37,8 @@ facts("Trading metrics from transactions blotter") do
     @fact length(vt) => ntrans
 
     @fact length(perfm[:PnL]) => ntrans
-    @fact perfm[:PnL] => roughly([0.0, -a*(pexit - pent)])
+    @fact perfm[:PnL] => roughly([0.0, pnlfin])
+    @fact TradingLogic.tradepnlfinal(blotter) => roughly(pnlfin)
   end
   context("Long then short") do
     blotter = TradingLogic.emptyblotter()
@@ -46,6 +49,8 @@ facts("Trading metrics from transactions blotter") do
     blotter[DateTime(2015,1,1,0)] = (along, p1)
     blotter[DateTime(2015,1,1,1)] = (-(along + ashort), p2)
     blotter[DateTime(2015,1,2)] = (0, p3) # e.g. stop backtest point
+    losslong = along*(p2 - p1)
+    pnlfin = losslong + ashort*(p2 - p3)
 
     metr = [:PnL]
     vt, perfm = TradingLogic.tradeperf(blotter, metr)
@@ -53,9 +58,9 @@ facts("Trading metrics from transactions blotter") do
     @fact length(vt) => ntrans
 
     @fact length(perfm[:PnL]) => ntrans
-    losslong = along*(p2 - p1)
-    @fact perfm[:PnL] => roughly([0.0, losslong,
-                                 losslong + ashort*(p2 - p3)])
+
+    @fact perfm[:PnL] => roughly([0.0, losslong, pnlfin])
+    @fact TradingLogic.tradepnlfinal(blotter) => roughly(pnlfin)
     #println(vt, perfm)
   end
 end

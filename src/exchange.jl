@@ -51,7 +51,7 @@ function submit_ordernew(orde::Order, backtest::Bool)
   if !backtest
     return "FAIL"
   end
-  println("Submitting order $orde")
+  #println("Submitting order $orde")
   return orde.id
 end
 
@@ -71,7 +71,7 @@ function submit_ordercancel(orde::Order)
     warn("Attempting to cancel a non-pending order")
     return false
   end
-  println("Cancelling pending order $orde")
+  #println("Cancelling pending order $orde")
   return true
 end
 
