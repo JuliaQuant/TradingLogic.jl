@@ -4,17 +4,14 @@ TradingLogic
 Exported
 --------
 
-runtrading!{M}(blotter::Dict{DateTime, (Int64, Float64)}, backtest::Bool, s\_ohlc::Input{TimeArray{Float64, 2, M}}, s\_pnow::Signal{Float64}, position\_initial::Int64, targetfun::Function, strategy\_args...)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. function:: runtrading!{M}(blotter::Dict{DateTime, (Int64, Float64)}, backtest::Bool, s\_ohlc::Input{TimeArray{Float64, 2, M}}, s\_pnow::Signal{Float64}, position\_initial::Int64, targetfun::Function, strategy\_args...)
 
-Event-driven backtesting / live trading. Input: - ``blotter`` (could be
-initially empty) to write transactions to, as an associative collection
-DateTime => (Qty::Int64,
-FillPrice::Float64)\ ``; -``\ backtest\ ``is``\ Bool\ ``, live trading performed if``\ false\ ``; -``\ s\_ohlc\ ``is``\ TimeArray\ ``-valued signal; -``\ targetfun\ ``is the trading strategy function generating``\ (poschg::Int64,
-Vector[limitprice,
-stopprice]\ ``signal; - additional arguments``...\ ``to be passed to``\ targetfun\ ``: these would most commonly be trading strategy parameters. ... In-place modifies``\ blotter\ ``(adds transactions to it). Returns``\ Bool\`-signal
-for the overall status of the trading system (false if problems are
-detected).
+
+Event-driven backtesting / live trading. Input: - ``blotter`` (could be initially empty) to write transactions to, as an associative collection
+DateTime => (Qty::Int64, FillPrice::Float64)\ ``; -``\ backtest\ ``is``\ Bool\ ``, live trading performed if``\ false\ ``; -``\ s\_ohlc\ ``is``\ TimeArray\ 
+``-valued signal; -``\ targetfun\ ``is the trading strategy function generating``\ (poschg::Int64, Vector[limitprice, stopprice]\ ``signal; - additional 
+arguments``...\ ``to be passed to``\ targetfun\ ``: these would most commonly be trading strategy parameters. ... In-place modifies``\ blotter\ ``(adds 
+transactions to it). Returns``\ Bool\`-signal for the overall status of the trading system (false if problems are detected).
 
 **source:**
 `TradingLogic/src/TradingLogic.jl:54 <https://github.com/JuliaQuant/TradingLogic.jl/tree/5e6aaddd7f0d78c0f92adaedaa1e370f00ada71e/src/TradingLogic.jl#L54>`__
@@ -22,19 +19,16 @@ detected).
 Internal
 --------
 
-query\_orderstatus
-^^^^^^^^^^^^^^^^^^
+.. function:: query\_orderstatus
 
-Get order status by order ID string. Returns ``Symbol`` in line with
-``Order``-type options for status-slot.
+Get order status by order ID string. Returns ``Symbol`` in line with ``Order``-type options for status-slot.
 
 **source:**
 `TradingLogic/src/exchange.jl:26 <https://github.com/JuliaQuant/TradingLogic.jl/tree/5e6aaddd7f0d78c0f92adaedaa1e370f00ada71e/src/exchange.jl#L26>`__
 
 --------------
 
-submit\_ordercancel
-^^^^^^^^^^^^^^^^^^^
+.. function:: submit\_ordercancel
 
 Cancel order request. Returns ``Bool`` request result.
 
@@ -43,8 +37,7 @@ Cancel order request. Returns ``Bool`` request result.
 
 --------------
 
-submit\_ordernew
-^^^^^^^^^^^^^^^^
+.. function:: submit\_ordernew
 
 Submit new order. Returns order ID string or ``FAIL``-string
 
@@ -53,19 +46,16 @@ Submit new order. Returns order ID string or ``FAIL``-string
 
 --------------
 
-emptyblotter()
-^^^^^^^^^^^^^^
+.. function:: emptyblotter()
 
-Initialize empty blotter as an associative collection
-``DateTime => (Qty::Int64, FillPrice::Float64)``
+Initialize empty blotter as an associative collection ``DateTime => (Qty::Int64, FillPrice::Float64)``
 
 **source:**
 `TradingLogic/src/types.jl:53 <https://github.com/JuliaQuant/TradingLogic.jl/tree/5e6aaddd7f0d78c0f92adaedaa1e370f00ada71e/src/types.jl#L53>`__
 
 --------------
 
-emptyorder()
-^^^^^^^^^^^^
+.. funciton:: emptyorder()
 
 Empty order: no quantity
 
@@ -74,19 +64,16 @@ Empty order: no quantity
 
 --------------
 
-fsigchange(prev, x)
-^^^^^^^^^^^^^^^^^^^
+.. function:: fsigchange(prev, x)
 
-Signal value change function to be used with foldl; use with (Bool,
-signal\_t=0) tuple as initial fold value
+Signal value change function to be used with foldl; use with (Bool, signal\_t=0) tuple as initial fold value
 
 **source:**
 `TradingLogic/src/sigutils.jl:9 <https://github.com/JuliaQuant/TradingLogic.jl/tree/5e6aaddd7f0d78c0f92adaedaa1e370f00ada71e/src/sigutils.jl#L9>`__
 
 --------------
 
-getorderposchg(orde::Order)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. function:: getorderposchg(orde::Order)
 
 Signed position change in the Order object
 
@@ -95,8 +82,7 @@ Signed position change in the Order object
 
 --------------
 
-goldencrossmktstate(mafast::Float64, maslow::Float64)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. function:: goldencrossmktstate(mafast::Float64, maslow::Float64)
 
 Market state in goldencross strategy
 
@@ -105,20 +91,17 @@ Market state in goldencross strategy
 
 --------------
 
-goldencrossposlogic(mktstate::Symbol, targetqty::Int64, position\_actual\_mut::Array{Int64, 1})
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. function:: goldencrossposlogic(mktstate::Symbol, targetqty::Int64, position\_actual\_mut::Array{Int64, 1})
 
-Target position for goldencross strategy. This simplest form involves
-only market orders, long-side enter. ... Returns
-``(poschg::Int64, Vector[limitprice, stopprice]``.
+Target position for goldencross strategy. This simplest form involves only market orders, long-side enter. ... Returns ``(poschg::Int64, 
+Vector[limitprice, stopprice]``.
 
 **source:**
 `TradingLogic/src/strategies/goldencross.jl:19 <https://github.com/JuliaQuant/TradingLogic.jl/tree/5e6aaddd7f0d78c0f92adaedaa1e370f00ada71e/src/strategies/goldencross.jl#L19>`__
 
 --------------
 
-goldencrosstarget{M}(s\_ohlc::Input{TimeArray{Float64, 2, M}}, position\_actual\_mut::Array{Int64, 1}, targetqty::Int64)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. function:: goldencrosstarget{M}(s\_ohlc::Input{TimeArray{Float64, 2, M}}, position\_actual\_mut::Array{Int64, 1}, targetqty::Int64)
 
 Target signal for goldencross strategy.
 
@@ -127,8 +110,7 @@ Target signal for goldencross strategy.
 
 --------------
 
-goldencrosstarget{M}(s\_ohlc::Input{TimeArray{Float64, 2, M}}, position\_actual\_mut::Array{Int64, 1}, targetqty::Int64, nsma\_fast::Int64)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. function:: goldencrosstarget{M}(s\_ohlc::Input{TimeArray{Float64, 2, M}}, position\_actual\_mut::Array{Int64, 1}, targetqty::Int64, nsma\_fast::Int64)
 
 Target signal for goldencross strategy.
 
@@ -137,8 +119,7 @@ Target signal for goldencross strategy.
 
 --------------
 
-goldencrosstarget{M}(s\_ohlc::Input{TimeArray{Float64, 2, M}}, position\_actual\_mut::Array{Int64, 1}, targetqty::Int64, nsma\_fast::Int64, nsma\_slow::Int64)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. function:: goldencrosstarget{M}(s\_ohlc::Input{TimeArray{Float64, 2, M}}, position\_actual\_mut::Array{Int64, 1}, targetqty::Int64, nsma\_fast::Int64, nsma\_slow::Int64)
 
 Target signal for goldencross strategy.
 
@@ -147,8 +128,7 @@ Target signal for goldencross strategy.
 
 --------------
 
-ispending(orde::Order)
-^^^^^^^^^^^^^^^^^^^^^^
+.. function:: ispending(orde::Order)
 
 Check if order status is ``:pending``
 
@@ -157,8 +137,7 @@ Check if order status is ``:pending``
 
 --------------
 
-luxormktstate(mafast::Float64, maslow::Float64)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. function:: luxormktstate(mafast::Float64, maslow::Float64)
 
 Market state in luxor strategy
 
@@ -167,19 +146,16 @@ Market state in luxor strategy
 
 --------------
 
-luxorposlogic(mktstate::Symbol, mktchgh::Float64, mktchgl::Float64, pthresh::Float64, targetqty::Int64, position\_actual\_mut::Array{Int64, 1})
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. function:: luxorposlogic(mktstate::Symbol, mktchgh::Float64, mktchgl::Float64, pthresh::Float64, targetqty::Int64, position\_actual\_mut::Array{Int64, 1})
 
-Target position and stop, limit prices (if any) for luxor strategy. ...
-Returns ``(poschg::Int64, Vector[limitprice, stopprice]``.
+Target position and stop, limit prices (if any) for luxor strategy. ...  Returns ``(poschg::Int64, Vector[limitprice, stopprice]``.
 
 **source:**
 `TradingLogic/src/strategies/luxor.jl:27 <https://github.com/JuliaQuant/TradingLogic.jl/tree/5e6aaddd7f0d78c0f92adaedaa1e370f00ada71e/src/strategies/luxor.jl#L27>`__
 
 --------------
 
-luxortarget{M}(s\_ohlc::Input{TimeArray{Float64, 2, M}}, position\_actual\_mut::Array{Int64, 1}, nsma\_fast::Int64, nsma\_slow::Int64, pthreshold::Float64, targetqty::Int64)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. function:: luxortarget{M}(s\_ohlc::Input{TimeArray{Float64, 2, M}}, position\_actual\_mut::Array{Int64, 1}, nsma\_fast::Int64, nsma\_slow::Int64, pthreshold::Float64, targetqty::Int64)
 
 Target signal for luxor strategy.
 
@@ -188,8 +164,7 @@ Target signal for luxor strategy.
 
 --------------
 
-neworderid(trig::ASCIIString)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. function:: neworderid(trig::ASCIIString)
 
 Generate oder ID string for a new order
 
@@ -198,8 +173,7 @@ Generate oder ID string for a new order
 
 --------------
 
-orderhandling!(targ::(Int64, Array{Float64, 1}), pnow::Float64, tnow::DateTime, position\_actual\_mut::Array{Int64, 1}, ordcurr::Order, blotter::Dict{DateTime, (Int64, Float64)}, backtest::Bool)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. function:: orderhandling!(targ::(Int64, Array{Float64, 1}), pnow::Float64, tnow::DateTime, position\_actual\_mut::Array{Int64, 1}, ordcurr::Order, blotter::Dict{DateTime, (Int64, Float64)}, backtest::Bool)
 
 Order handling for backtesting and live trading. Input: - target
 ``targ`` as ``(poschg::Int64, Vector[limitprice, stopprice]``; -
@@ -214,8 +188,7 @@ Returns ``Bool`` system status.
 
 --------------
 
-plimitcheck(orde::Order, pnow::Float64)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. function:: plimitcheck(orde::Order, pnow::Float64)
 
 Backtesting helper function: check if limit-price is reached
 
@@ -224,8 +197,7 @@ Backtesting helper function: check if limit-price is reached
 
 --------------
 
-query\_orderstatus(orde::Order, pnow::Float64)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. function:: query\_orderstatus(orde::Order, pnow::Float64)
 
 Order status: backtesting version based on current price ``pnow``
 
@@ -234,8 +206,7 @@ Order status: backtesting version based on current price ``pnow``
 
 --------------
 
-query\_orderstatus(ordid::ASCIIString)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. function:: query\_orderstatus(ordid::ASCIIString)
 
 Order status: live version
 
@@ -244,8 +215,7 @@ Order status: live version
 
 --------------
 
-schange{T}(s\_inp::Signal{T})
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. function:: schange{T}(s\_inp::Signal{T})
 
 Bool change signal, true when input signal changes
 
@@ -254,8 +224,7 @@ Bool change signal, true when input signal changes
 
 --------------
 
-setcancelled!(orde::Order)
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. function:: setcancelled!(orde::Order)
 
 Change order status to ``:cancelled``
 
@@ -264,8 +233,7 @@ Change order status to ``:cancelled``
 
 --------------
 
-submit\_ordercancel(orde::Order)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. function:: submit\_ordercancel(orde::Order)
 
 Cancel pending order backtest version
 
@@ -274,8 +242,7 @@ Cancel pending order backtest version
 
 --------------
 
-submit\_ordercancel(ordid::ASCIIString)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. funciton:: submit\_ordercancel(ordid::ASCIIString)
 
 Cancel order live version: provide order ID string ``ordid``
 
@@ -284,8 +251,7 @@ Cancel order live version: provide order ID string ``ordid``
 
 --------------
 
-submit\_ordernew(orde::Order, backtest::Bool)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. function:: submit\_ordernew(orde::Order, backtest::Bool)
 
 New order submission: backtesting version.
 
@@ -294,8 +260,7 @@ New order submission: backtesting version.
 
 --------------
 
-submit\_ordernew(orde::Order, position\_actual::Int64)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. fuction:: submit\_ordernew(orde::Order, position\_actual::Int64)
 
 New order submission: live version
 
@@ -304,8 +269,7 @@ New order submission: live version
 
 --------------
 
-targ2order!(orde::Order, targ::(Int64, Array{Float64, 1}), trig::ASCIIString, position\_actual::Int64, backtest::Bool)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. function:: targ2order!(orde::Order, targ::(Int64, Array{Float64, 1}), trig::ASCIIString, position\_actual::Int64, backtest::Bool)
 
 Prepare new order from ``targ``
 (``(poschg::Int64, Vector[limitprice,stopprice]``) and trigger-string
@@ -321,8 +285,7 @@ status.
 
 --------------
 
-tradeperf(blotter::Dict{DateTime, (Int64, Float64)}, metrics::Array{Symbol, 1})
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. function:: tradeperf(blotter::Dict{DateTime, (Int64, Float64)}, metrics::Array{Symbol, 1})
 
 Trade analysis for ``blotter`` provided as
 ``DateTime => (Qty::Int64, FillPrice::Float64)`` assoc. collection.
@@ -334,8 +297,7 @@ Input ``metrics`` specifies what to calculate. Returns: tuple ( DateTime
 
 --------------
 
-tradepnlfinal(blotter::Dict{DateTime, (Int64, Float64)})
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. function:: tradepnlfinal(blotter::Dict{DateTime, (Int64, Float64)})
 
 Final profit/loss for ``blotter`` provided as
 ``DateTime => (Qty::Int64, FillPrice::Float64)`` assoc. collection.
@@ -348,8 +310,7 @@ scalar.
 
 --------------
 
-Order
-^^^^^
+.. function:: Order
 
 Order type
 
