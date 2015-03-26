@@ -4,3 +4,4 @@ An attempt at a unified framework in Julia language for both event-driven backte
 
 The main objective is to be able to backtest and place real-time orders using the same trading strategy functions.
 
+[Documentation](http://tradinglogicjl.readthedocs.org/en/latest/)

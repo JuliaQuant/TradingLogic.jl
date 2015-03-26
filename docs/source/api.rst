@@ -55,7 +55,7 @@ Initialize empty blotter as an associative collection ``DateTime => (Qty::Int64,
 
 --------------
 
-.. funciton:: emptyorder()
+.. function:: emptyorder()
 
 Empty order: no quantity
 
@@ -242,7 +242,7 @@ Cancel pending order backtest version
 
 --------------
 
-.. funciton:: submit\_ordercancel(ordid::ASCIIString)
+.. function:: submit\_ordercancel(ordid::ASCIIString)
 
 Cancel order live version: provide order ID string ``ordid``
 
@@ -260,7 +260,7 @@ New order submission: backtesting version.
 
 --------------
 
-.. fuction:: submit\_ordernew(orde::Order, position\_actual::Int64)
+.. function:: submit\_ordernew(orde::Order, position\_actual::Int64)
 
 New order submission: live version
 
