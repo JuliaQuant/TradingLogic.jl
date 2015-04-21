@@ -8,7 +8,7 @@ using Reactive, Match, FinancialSeries, MarketTechnicals
 
 module TradingLogic
 
-using Docile
+using Docile, Compat
 
 if VERSION < v"0.4-"
     using Dates
@@ -51,7 +51,8 @@ In-place modifies `blotter` (adds transactions to it).
 Returns `Bool`-signal for the overall status of the trading system
 (false if problems are detected).
 """
-function runtrading!{M}(blotter::Dict{DateTime,(Int64,Float64)},
+#function runtrading!{M}(blotter::Dict{DateTime,(Int64,Float64)},
+function runtrading!{M}(blotter::Dict{DateTime,@compat(Tuple{Int64,Float64})},
                         backtest::Bool,
                         s_ohlc::Input{FinancialTimeSeries{Float64,2,M}},
                         s_pnow::Signal{Float64},

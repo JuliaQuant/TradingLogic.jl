@@ -18,7 +18,8 @@ if stop-price of stoplimit order is reached.
 Overwrites `orde` and returns `Bool` request status.
 """
 function targ2order!(orde::Order,
-                     targ::(Int64, Vector{Float64}),
+                     #targ::(Int64, Vector{Float64}),
+                     targ::@compat(Tuple{Int64, Vector{Float64}}),
                      trig::ASCIIString,
                      position_actual::Int64,
                      backtest::Bool)
@@ -75,11 +76,14 @@ In-place modifies:
  and `backtestblotter` associative collection.
 Returns `Bool` system status.
 """
-function orderhandling!(targ::(Int64, Vector{Float64}),
-                        pnow::Float64, tnow::DateTime,
+#function orderhandling!(targ::(Int64, Vector{Float64}),
+function orderhandling!(targ::@compat(Tuple{Int64, Vector{Float64}}),
+                        pnow::Float64, 
+                        tnow::DateTime,
                         position_actual_mut::Vector{Int64},
                         ordcurr::Order,
-                        blotter::Dict{DateTime,(Int64,Float64)},
+                        #blotter::Dict{DateTime,(Int64,Float64)},
+                        blotter::Dict{DateTime,@compat(Tuple{Int64,Float64})},
                         backtest::Bool
                         )
   posact = position_actual_mut[1]
