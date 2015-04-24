@@ -50,7 +50,8 @@ end
 Initialize empty blotter as an associative collection
 `DateTime => (Qty::Int64, FillPrice::Float64)`
 """
-emptyblotter() = (DateTime=>(Int64,Float64))[]
+#emptyblotter() = (DateTime=>(Int64,Float64))[]
+emptyblotter() = @compat Dict{DateTime, Tuple{Int64,Float64}}()
 ### TODO (later): accociative collections syntax changes in Julia 0.4
 
 

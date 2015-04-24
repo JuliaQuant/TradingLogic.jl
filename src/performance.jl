@@ -5,9 +5,11 @@ Input `metrics` specifies what to calculate.
 Returns: tuple ( DateTime (ordered) array , assoc. collection of perf metrics ).
 Basic transaction info is also included (quantity, fill price).
 """
-function tradeperf(blotter::Dict{DateTime,(Int64,Float64)},
+#function tradeperf(blotter::Dict{DateTime,(Int64,Float64)},
+function tradeperf(blotter::Dict{DateTime,@compat(Tuple{Int64,Float64})},
                    metrics::Vector{Symbol})
-  perfm = (Symbol=>Vector{Float64})[]
+  #perfm = (Symbol=>Vector{Float64})[]
+  perfm = @compat Dict{Symbol, Vector{Float64}}()
   ### TODO (later): accociative collections syntax changes in Julia 0.4
 
   # timestamps in order
@@ -53,7 +55,7 @@ faster verision (minimizing memory allocation) to be used
 in e.g. parameter optimization workflow.
 Returns: final profit/loss `Float64` scalar.
 """
-function tradepnlfinal(blotter::Dict{DateTime,(Int64,Float64)})
+function tradepnlfinal(blotter::Dict{DateTime,@compat(Tuple{Int64,Float64})})
   # timestamps in order
   vt = sort!(collect(keys(blotter)))
   nt = length(vt)
