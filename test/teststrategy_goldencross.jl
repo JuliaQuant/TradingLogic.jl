@@ -37,36 +37,82 @@ facts("Goldencross trading logic") do
 end
 
 facts("Goldencross strategy backtesting") do
-  context("SP500 daily vs. zipline") do
+  context("Boeing stock over 50 years vs. quantstrat") do
+    # quantstrat input: OHLC data
+    ohlc_BA = TimeSeries.readtimearray(
+      "test/quantstrat/goldencross/data/OHLC_BA_2.csv")
+    # parameters should match
+    #  test/quantstrat/goldencross/quantstrat_goldencross.R
     mafast = 50
     maslow = 200
     targetqty = 100
+    # restrict between start and end dates
+    #println(ohlc_BA)
+    ##ohlc_test = ohlc_BA[Date(1961,12,31):Date(2010,1,1)]
+    # in reality: quantstrat transactions are present
+    # past the end date
+    date_final = Date(2012,8,31)
+    ohlc_test = ohlc_BA[Date(1961,12,31):date_final]
+    #println(ohlc_test)
+    # NOTE: excluding period around 2012-09-06 where
+    # quantstrat behavior differs from TradingLogic by design
 
-    ### TODO change data input
+    # quantstrat output: transactions
+    txnsdf = DataFrames.readtable(
+      "test/quantstrat/goldencross/transactions.csv",
+      header = true,
+      names = [:datestr, :qty, :prc, :fees, :val, :avgcost, :pl],
+      eltypes = [UTF8String, Int64, Float64, Float64,
+                 Float64, Float64, Float64])[2:end,:]
+    # vectors to verify
+    vqty = convert(Array, txnsdf[:qty])
+    vprc = convert(Array, txnsdf[:prc])
+    vpnlcum = cumsum(convert(Array, txnsdf[:pl]))
+    # NOTE: quantstrat records transaction times when
+    #  signal is fired not when open fill-price is taken
+    # adjusting for that
+    vdate = Date(DateTime(convert(Array, txnsdf[:datestr]),
+                          "yyyy-mm-dd HH:MM:SS"))
+    oneday = Day(1)
+    for i = 1:length(vdate)
+      vdate[i] = vdate[i] + oneday
+    end
 
-    s_ohlc = Reactive.Input(ohlc[1:maslow])
+    s_ohlc = Reactive.Input(ohlc_test[1:maslow])
 
-    # backtest at close price
-    s_pnow = Reactive.lift(s -> values(s["Close"])[end],
+    # backtest at next-open price
+    # quantstrat fills tracsactions at next open on enter-signal
+    s_pnow = Reactive.lift(s -> s["Open"].values[end],
                            Float64, s_ohlc)
     blotter = TradingLogic.emptyblotter()
 
     s_status = TradingLogic.runtrading!(
       blotter, true, s_ohlc, s_pnow, 0,
       TradingLogic.goldencrosstarget, targetqty, mafast, maslow)
-    for i in (maslow + 1):length(ohlc)
-      push!(s_ohlc, ohlc[i-maslow:i])
-      #println(ohlc[i]["Close"])
+    for i in (maslow + 1):length(ohlc_test)
+      push!(s_ohlc, ohlc_test[i-maslow:i])
     end
 
-    println(blotter)
-
+    #println(blotter)
     metr = [:PnL]
     vt, perfm = TradingLogic.tradeperf(blotter, metr)
-    println(vt)
-    println(perfm)
+    #println(vt)
+    #println(perfm[:PnL])
 
-    ### TODO
-    @pending 0 => 1
+    # transaction matching
+    @fact length(perfm[:Qty]) => length(txnsdf[:datestr])
+    @fact Date(vt) => vdate
+    @fact perfm[:Qty] => vqty
+    @fact perfm[:FillPrice] => roughly(vprc)
+
+    # profit loss over time
+    @fact perfm[:PnL] => roughly(vpnlcum)
+
+    # total profit loss:
+    # exit for cumulative statistics at the end date
+    blotter[DateTime(date_final)] = (
+      -sum(perfm[:Qty]), s_ohlc.value["Close"].values[end])
+    # quantstrat/goldencross/results_summary.txt
+    @fact TradingLogic.tradepnlfinal(blotter) => roughly(2211.0)
   end
 end

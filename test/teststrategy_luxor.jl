@@ -55,7 +55,7 @@ facts("Luxor strategy backtesting") do
 
     s_ohlc = Reactive.Input(ohlc[1:maslow])
     # backtest at close price
-    s_pnow = Reactive.lift(s -> values(s["Close"])[end],
+    s_pnow = Reactive.lift(s -> s["Close"].values[end],
                            Float64, s_ohlc)
     blotter = TradingLogic.emptyblotter()
 
