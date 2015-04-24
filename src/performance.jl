@@ -3,6 +3,7 @@ Trade analysis for `blotter` provided as
 `DateTime => (Qty::Int64, FillPrice::Float64)` assoc. collection.
 Input `metrics` specifies what to calculate.
 Returns: tuple ( DateTime (ordered) array , assoc. collection of perf metrics ).
+Basic transaction info is also included (quantity, fill price).
 """
 function tradeperf(blotter::Dict{DateTime,(Int64,Float64)},
                    metrics::Vector{Symbol})
@@ -12,6 +13,18 @@ function tradeperf(blotter::Dict{DateTime,(Int64,Float64)},
   # timestamps in order
   vt = sort!(collect(keys(blotter)))
   nt = length(vt)
+
+  # basic info for each transaction
+  vqty = Array(Int64, nt)
+  vprc = zeros(nt)
+  for i = 1:nt
+    ti = vt[i]
+    bi = blotter[ti]
+    @inbounds vqty[i] = bi[1]
+    @inbounds vprc[i] = bi[2]
+  end
+  perfm[:Qty] = vqty
+  perfm[:FillPrice] = vprc
 
   # PnL vector
   if findfirst(metrics, :PnL) > 0

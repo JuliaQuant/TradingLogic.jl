@@ -37,7 +37,9 @@ include("strategies/luxor.jl")
 
 """
 Event-driven backtesting / live trading.
+
 Input:
+
 - `blotter` (could be initially empty) to write transactions to,
 as an associative collection DateTime => (Qty::Int64, FillPrice::Float64)`;
 - `backtest` is `Bool`, live trading performed if `false`;
@@ -46,8 +48,9 @@ as an associative collection DateTime => (Qty::Int64, FillPrice::Float64)`;
 `(poschg::Int64, Vector[limitprice, stopprice]` signal;
 - additional arguments `...` to be passed to `targetfun`: these would
 most commonly be trading strategy parameters.
-...
+
 In-place modifies `blotter` (adds transactions to it).
+
 Returns `Bool`-signal for the overall status of the trading system
 (false if problems are detected).
 """

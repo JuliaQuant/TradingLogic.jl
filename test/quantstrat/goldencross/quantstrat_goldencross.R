@@ -7,16 +7,19 @@ port     = 'Boeing'
 acct     = 'Aerospace'
 initEq   = 100000
 initDate = '1961-12-31'
-endDate  = '2010-01-01'
+endDate  = '2012-08-31'
 fast     = 50
 slow     = 200
 
 ############################# GET DATA ######################################
 
 suppressMessages(require(quantstrat))
-#load('data/BA.Rdata') # need absolute path unless running R in current directory
-load('~/.julia/v0.4/TradingLogic/test/data/BA.Rdata')
-BA = BA[,1:4]
+
+#load('data/BA.RData') # need absolute path unless running R in current directory
+#load('~/.julia/v0.3/TradingLogic/test/data/BA.RData')
+#BA = BA[,1:4]
+
+BA = as.xts(read.zoo("data/OHLC_BA_2.csv", header=TRUE, sep=","))
 
 print("Data gotten")
 
@@ -161,3 +164,15 @@ book  = getOrderBook(port)
 stats = tradeStats(port)
 rets  = PortfReturns(acct)
 txns  = getTxns(port, sym)
+
+# transactions csv
+write.zoo(txns, file="transactions.csv", sep=",")
+
+# results summary with session information
+print(getwd())
+fnm <- "results_summary.txt"
+sink(fnm, append=FALSE)
+print(t(tradeStats(port)))
+sink(fnm, append=TRUE)
+print(sessionInfo(package=NULL), locale=FALSE)
+sink()

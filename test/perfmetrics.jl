@@ -17,6 +17,10 @@ facts("Trading metrics from transactions blotter") do
     @fact length(vt) => ntrans
 
     @fact length(perfm[:PnL]) => ntrans
+
+    @fact perfm[:Qty] => [a1, a2, -(a1 + a2)]
+    @fact perfm[:FillPrice] => roughly([p1, p2, pexit])
+
     @fact perfm[:PnL] => roughly([0.0, a1*(p2 - p1), pnlfin])
     @fact TradingLogic.tradepnlfinal(blotter) => roughly(pnlfin)
   end
@@ -37,6 +41,10 @@ facts("Trading metrics from transactions blotter") do
     @fact length(vt) => ntrans
 
     @fact length(perfm[:PnL]) => ntrans
+
+    @fact perfm[:Qty] => [-a, a]
+    @fact perfm[:FillPrice] => roughly([pent, pexit])
+
     @fact perfm[:PnL] => roughly([0.0, pnlfin])
     @fact TradingLogic.tradepnlfinal(blotter) => roughly(pnlfin)
   end
@@ -58,6 +66,9 @@ facts("Trading metrics from transactions blotter") do
     @fact length(vt) => ntrans
 
     @fact length(perfm[:PnL]) => ntrans
+
+    @fact perfm[:Qty] => [along, -(along + ashort), 0]
+    @fact perfm[:FillPrice] => roughly([p1, p2, p3])
 
     @fact perfm[:PnL] => roughly([0.0, losslong, pnlfin])
     @fact TradingLogic.tradepnlfinal(blotter) => roughly(pnlfin)

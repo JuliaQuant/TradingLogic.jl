@@ -1,0 +1,45 @@
+                   BA         
+Portfolio          "Boeing"   
+Symbol             "BA"       
+Num.Txns           "71"       
+Num.Trades         "35"       
+Net.Trading.PL     "2211"     
+Avg.Trade.PL       "71.45714" 
+Med.Trade.PL       "-217"     
+Largest.Winner     "4250"     
+Largest.Loser      "-2200"    
+Gross.Profits      "17977"    
+Gross.Losses       "-15476"   
+Std.Dev.Trade.PL   "1303.49"  
+Percent.Positive   "40"       
+Percent.Negative   "60"       
+Profit.Factor      "1.161605" 
+Avg.Win.Trade      "1284.071" 
+Med.Win.Trade      "1211"     
+Avg.Losing.Trade   "-736.9524"
+Med.Losing.Trade   "-640"     
+Avg.Daily.PL       "71.45714" 
+Med.Daily.PL       "-217"     
+Std.Dev.Daily.PL   "1303.49"  
+Ann.Sharpe         "0.8702385"
+Max.Drawdown       "-17374"   
+Profit.To.Max.Draw "0.1272591"
+Avg.WinLoss.Ratio  "1.742408" 
+Med.WinLoss.Ratio  "1.892188" 
+Max.Equity         "14387"    
+Min.Equity         "-2987"    
+End.Equity         "2211"     
+R version 3.2.0 (2015-04-16)
+Platform: x86_64-pc-linux-gnu (64-bit)
+Running under: Ubuntu 14.04.1 LTS
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+[1] quantstrat_0.9.1669           foreach_1.4.2                 blotter_0.9.1666             
+[4] PerformanceAnalytics_1.4.3541 FinancialInstrument_1.2.0     quantmod_0.4-4               
+[7] TTR_0.22-0.1                  xts_0.9.874                   zoo_1.7-13                   
+
+loaded via a namespace (and not attached):
+[1] tools_3.2.0      codetools_0.2-11 grid_3.2.0       iterators_1.0.7  lattice_0.20-31 
