@@ -3,7 +3,10 @@ facts("Goldencross trading logic") do
     fm = TradingLogic.goldencrossmktstate
     @fact fm(120.0, 50.0) => :trendup
     @fact fm(20.0, 50.0) => :trenddown
-    @fact fm(20.0, 20.0) => :crosspoint
+    @fact fm(20.0, 20.0) => :undefined
+    @fact fm(NaN, 20.0) => :undefined
+    @fact fm(20.0, NaN) => :undefined
+    @fact fm(NaN, NaN) => :undefined
   end
   context("Target position") do
     tq = 100
@@ -26,13 +29,13 @@ facts("Goldencross trading logic") do
     # hold position in line with the market state
     @fact ft(:trendup, tq) => (0, stlim)
 
-    # crosspoint: wait
-    @fact ft(:crosspoint, tq) => (0, stlim)
+    # undefined: wait
+    @fact ft(:undefined, tq) => (0, stlim)
 
     # negative position: should not happen, close it
     @fact ft(:trendup, -5) => (5, stlim)
     @fact ft(:trenddown, -5) => (5, stlim)
-    @fact ft(:crosspoint, -5) => (5, stlim)
+    @fact ft(:undefined, -5) => (5, stlim)
   end
 end
 
@@ -78,19 +81,23 @@ facts("Goldencross strategy backtesting") do
       vdate[i] = vdate[i] + oneday
     end
 
-    s_ohlc = Reactive.Input(ohlc_test[1:maslow])
+    s_ohlc = Reactive.Input((Dates.DateTime(ohlc_test.timestamp[1]),
+                             vec(ohlc_test.values[1,:])))
+    ohlc_inds = (Symbol => Int64)[]
+    ohlc_inds[:open] = 1
+    ohlc_inds[:close] = 4
 
     # backtest at next-open price
     # quantstrat fills tracsactions at next open on enter-signal
-    s_pnow = Reactive.lift(s -> s["Open"].values[end],
-                           Float64, s_ohlc)
+    s_pnow = Reactive.lift(s -> s[2][ohlc_inds[:open]], s_ohlc, typ=Float64)
     blotter = TradingLogic.emptyblotter()
 
     s_status = TradingLogic.runtrading!(
-      blotter, true, s_ohlc, s_pnow, 0,
+      blotter, true, s_ohlc, ohlc_inds, s_pnow, 0,
       TradingLogic.goldencrosstarget, targetqty, mafast, maslow)
-    for i in (maslow + 1):length(ohlc_test)
-      push!(s_ohlc, ohlc_test[i-maslow:i])
+    for i = 2:length(ohlc_test)
+      push!(s_ohlc, (Dates.DateTime(ohlc_test.timestamp[i]),
+                     vec(ohlc_test.values[i,:])))
     end
 
     #println(blotter)
@@ -110,8 +117,7 @@ facts("Goldencross strategy backtesting") do
 
     # total profit loss:
     # exit for cumulative statistics at the end date
-    blotter[DateTime(date_final)] = (
-      -sum(perfm[:Qty]), s_ohlc.value["Close"].values[end])
+    blotter[DateTime(date_final)] = (-sum(perfm[:Qty]), s_ohlc.value[1])
     # quantstrat/goldencross/results_summary.txt
     @fact TradingLogic.tradepnlfinal(blotter) => roughly(2211.0)
   end

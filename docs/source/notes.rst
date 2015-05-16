@@ -16,17 +16,17 @@ Developer notes
 
 Run all tests and re-generate API documentation before each commit to the ``master`` branch.
 
-*Run tests* (Julia, package root directry e.g. ``~/.julia/v0.3/TradingLogic``):
+*Run tests* (Julia, package root directry e.g. ``~/.julia/v0.3/TradingLogic``): ::
 
     using TradingLogic
     include("test/runtests.jl")
 
-*Re-generate docstrings* (Julia):
+*Re-generate docstrings* (Julia): ::
 
     using Lexicon, TradingLogic
     save("docs/api.md", TradingLogic)
 
-Generate ``rst``-file for the documentation system (shell):
+Generate ``rst``-file for the documentation system (shell): ::
 
     pandoc --from=markdown --to=rst --output=docs/source/api.rst docs/api.md
 

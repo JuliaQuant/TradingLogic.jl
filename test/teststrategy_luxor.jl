@@ -1,9 +1,12 @@
-facts("Goldencross trading logic") do
+facts("Luxor trading logic") do
   context("Market state") do
     fm = TradingLogic.luxormktstate
     @fact fm(120.0, 50.0) => :trendup
     @fact fm(20.0, 50.0) => :trenddown
-    @fact fm(20.0, 20.0) => :crosspoint
+    @fact fm(20.0, 20.0) => :undefined
+    @fact fm(NaN, 20.0) => :undefined
+    @fact fm(20.0, NaN) => :undefined
+    @fact fm(NaN, NaN) => :undefined
   end
   context("Target position") do
     tq = 100
@@ -37,10 +40,10 @@ facts("Goldencross trading logic") do
     p = -int(tq/2)
     @fact ft(:trendup, p) => (abs(p), stlim)
 
-    # crosspoint: wait
-    @fact ft(:crosspoint, 0) => (0, stlim)
-    @fact ft(:crosspoint, -tq) => (0, stlim)
-    @fact ft(:crosspoint, tq) => (0, stlim)
+    # undefined: wait
+    @fact ft(:undefined, 0) => (0, stlim)
+    @fact ft(:undefined, -tq) => (0, stlim)
+    @fact ft(:undefined, tq) => (0, stlim)
   end
 end
 
@@ -52,19 +55,24 @@ facts("Luxor strategy backtesting") do
     pthresh = 10.0
 
     ### TODO change data input
+    s_ohlc = Reactive.Input((Dates.DateTime(ohlc.timestamp[1]),
+                             vec(ohlc.values[1,:])))
+    ohlc_inds = (Symbol => Int64)[]
+    ohlc_inds[:open] = 1
+    ohlc_inds[:high] = 2
+    ohlc_inds[:low] = 3
+    ohlc_inds[:close] = 4
 
-    s_ohlc = Reactive.Input(ohlc[1:maslow])
     # backtest at close price
-    s_pnow = Reactive.lift(s -> s["Close"].values[end],
-                           Float64, s_ohlc)
+    s_pnow = Reactive.lift(s -> s[2][ohlc_inds[:close]], s_ohlc, typ=Float64)
     blotter = TradingLogic.emptyblotter()
 
     s_status = TradingLogic.runtrading!(
-      blotter, true, s_ohlc, s_pnow, 0,
+      blotter, true, s_ohlc, ohlc_inds, s_pnow, 0,
       TradingLogic.luxortarget, mafast, maslow, pthresh, targetqty)
-    for i in (maslow + 1):length(ohlc)
-      push!(s_ohlc, ohlc[i-maslow:i])
-      #println(ohlc[i]["Close"])
+    for i = 2:length(ohlc)
+      push!(s_ohlc, (Dates.DateTime(ohlc.timestamp[i]),
+                     vec(ohlc.values[i,:])))
     end
 
     println(blotter)

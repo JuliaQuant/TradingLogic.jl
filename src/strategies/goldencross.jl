@@ -1,5 +1,8 @@
-"Market state in goldencross strategy"
+"Market state in goldencross strategy."
 function goldencrossmktstate(mafast::Float64, maslow::Float64)
+  if isnan(mafast) || isnan(maslow)
+    return :undefined
+  end
   if mafast > maslow
     return :trendup
   end
@@ -7,7 +10,7 @@ function goldencrossmktstate(mafast::Float64, maslow::Float64)
     return :trenddown
   end
   # this would be rare
-  return :crosspoint
+  return :undefined
 end
 
 """
@@ -43,21 +46,28 @@ function goldencrossposlogic(mktstate::Symbol,
 end
 
 "Target signal for goldencross strategy."
-function goldencrosstarget{M}(s_ohlc::Input{TimeArray{Float64,2,M}},
-                              position_actual_mut::Vector{Int64},
-                              targetqty::Int64,
-                              nsma_fast::Int64 = 50,
-                              nsma_slow::Int64 = 200)
+function goldencrosstarget(s_ohlc::Input{(DateTime,Vector{Float64})},
+                           ohlc_inds::Dict{Symbol,Int64},
+                           position_actual_mut::Vector{Int64},
+                           targetqty::Int64,
+                           nsma_fast::Int64 = 50,
+                           nsma_slow::Int64 = 200)
   posact = position_actual_mut[1]
   targetqty > 0 || error("target quantity must be positive")
 
   # signals updating at each timestep (aka OHLC bar)
-  s_close = lift(s -> values(s["Close"])[end], Float64, s_ohlc)
-  s_sma_fast = lift(s -> values(sma(s["Close"], nsma_fast))[end], Float64, s_ohlc)
-  s_sma_slow = lift(s -> values(sma(s["Close"], nsma_slow))[end], Float64, s_ohlc)
+  buffpclose!(buff::Vector{Float64}, tohlc::(DateTime,Vector{Float64})) =
+    sighistbuffer!(buff, tohlc[2][ohlc_inds[:close]])
+  pcloseinit = s_ohlc.value[2][ohlc_inds[:close]]
+  s_sma_fast = lift(mean,
+                    foldl(buffpclose!, initbuff(nsma_fast, pcloseinit), s_ohlc),
+                    typ=Float64)
+  s_sma_slow = lift(mean,
+                    foldl(buffpclose!, initbuff(nsma_slow, pcloseinit), s_ohlc),
+                    typ=Float64)
 
   # market state signal
-  s_mktstate = lift(goldencrossmktstate, Symbol, s_sma_fast, s_sma_slow)
+  s_mktstate = lift(goldencrossmktstate, s_sma_fast, s_sma_slow, typ=Symbol)
 
   # target position updates only when market state input changes
   s_target = lift(mks -> goldencrossposlogic(mks,

@@ -1,5 +1,8 @@
 "Market state in luxor strategy"
 function luxormktstate(mafast::Float64, maslow::Float64)
+  if isnan(mafast) || isnan(maslow)
+    return :undefined
+  end
   if mafast > maslow
     return :trendup
   end
@@ -7,7 +10,7 @@ function luxormktstate(mafast::Float64, maslow::Float64)
     return :trenddown
   end
   # this would be rare
-  return :crosspoint
+  return :undefined
 end
 # function luxormktstate(mafast::Float64, maslow::Float64)
 #   # @match is overkill here but keeping it as a template
@@ -54,22 +57,29 @@ function luxorposlogic(mktstate::Symbol,
 end
 
 "Target signal for luxor strategy."
-function luxortarget{M}(s_ohlc::Input{FinancialTimeSeries{Float64,2,M}},
-                        position_actual_mut::Vector{Int64},
-                        nsma_fast::Int64, nsma_slow::Int64,
-                        pthreshold::Float64, targetqty::Int64)
+function luxortarget(s_ohlc::Input{(DateTime,Vector{Float64})},
+                     ohlc_inds::Dict{Symbol,Int64},
+                     position_actual_mut::Vector{Int64},
+                     nsma_fast::Int64, nsma_slow::Int64,
+                     pthreshold::Float64, targetqty::Int64)
   posact = position_actual_mut[1]
   targetqty > 0 || error("target quantity must be positive")
 
   # signals updating at each timestep (aka OHLC bar)
-  s_close = lift(s -> values(s["Close"])[end], Float64, s_ohlc)
-  s_high = lift(s -> values(s["High"])[end], Float64, s_ohlc)
-  s_low = lift(s -> values(s["Low"])[end], Float64, s_ohlc)
-  s_sma_fast = lift(s -> values(sma(s["Close"], nsma_fast))[end], Float64, s_ohlc)
-  s_sma_slow = lift(s -> values(sma(s["Close"], nsma_slow))[end], Float64, s_ohlc)
+  buffpclose!(buff::Vector{Float64}, tohlc::(DateTime,Vector{Float64})) =
+    sighistbuffer!(buff, tohlc[2][ohlc_inds[:close]])
+  pcloseinit = s_ohlc.value[2][ohlc_inds[:close]]
+  s_sma_fast = lift(mean,
+                    foldl(buffpclose!, initbuff(nsma_fast, pcloseinit), s_ohlc),
+                    typ=Float64)
+  s_sma_slow = lift(mean,
+                    foldl(buffpclose!, initbuff(nsma_slow, pcloseinit), s_ohlc),
+                    typ=Float64)
+  s_high = lift(s -> s[2][ohlc_inds[:high]], s_ohlc, typ=Float64)
+  s_low = lift(s -> s[2][ohlc_inds[:low]], s_ohlc, typ=Float64)
 
   # market state signal
-  s_mktstate = lift(luxormktstate, Symbol, s_sma_fast, s_sma_slow)
+  s_mktstate = lift(luxormktstate, s_sma_fast, s_sma_slow, typ=Symbol)
 
   # market state change Bool-signal
   s_mktchg = schange(s_mktstate)

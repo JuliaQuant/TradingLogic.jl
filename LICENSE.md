@@ -1,6 +1,6 @@
 The TradingLogic.jl package is licensed under the MIT "Expat" License:
 
-> Copyright (c) 2015: multidis.
+> Copyright (c) 2015: Multi-disciplinary Insights, LLC.
 >
 > Permission is hereby granted, free of charge, to any person obtaining
 > a copy of this software and associated documentation files (the
