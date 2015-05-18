@@ -1,4 +1,39 @@
 facts("Trading metrics from transactions blotter") do
+  context("Transaction blotter transformations") do
+    blotter = TradingLogic.emptyblotter()
+
+    # long than short with exit
+    p1, p2, p3 = 108.0, 85.0, 74.0
+    along, ashort = 50, 70
+    tlong = Dates.DateTime(2015,1,1,3,8,17)
+    tshort = Dates.DateTime(2015,1,1,5,2,4)
+    texit = Dates.DateTime(2015,1,3,15,12,48)
+
+    # enter transactions not in chronological order
+    blotter[tshort] = (-(along + ashort), p2)
+    blotter[tlong] = (along, p1)
+    blotter[texit] = (ashort, p3)
+    TradingLogic.printblotter(STDOUT, blotter)
+
+    # sorted vectors
+    @fact TradingLogic.vtblotter(blotter) => [tlong, tshort, texit]
+    va, vp = TradingLogic.vapblotter(blotter)
+    @fact va => [along, -(along + ashort), ashort]
+    @fact vp => roughly([p1, p2, p3])
+
+    # print to file
+    dtfmt = "yyyy-mm-dd HH:MM:SS" # not default
+    fnm = "writetest.csv"
+    TradingLogic.writeblotter(fnm, blotter, dtformat = dtfmt)
+    rcsv = readcsv(fnm)
+    run(`rm $fnm`)
+    @fact size(rcsv) => (4,3)
+    @fact rcsv[1,2] => "Amount"
+    @fact rcsv[2,1] => Dates.format(tlong, dtfmt)
+    @fact rcsv[4,1] => Dates.format(texit, dtfmt)
+    @fact int(rcsv[3,2]) => -(along + ashort)
+    @fact float(rcsv[4,3]) => roughly(p3)
+  end
   context("Long enter with partial fill") do
     blotter = TradingLogic.emptyblotter()
     # fill prices and exit price

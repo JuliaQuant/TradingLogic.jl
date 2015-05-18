@@ -75,7 +75,8 @@ facts("Luxor strategy backtesting") do
                      vec(ohlc.values[i,:])))
     end
 
-    println(blotter)
+    TradingLogic.printblotter(STDOUT, blotter)
+
 
     metr = [:PnL]
     vt, perfm = TradingLogic.tradeperf(blotter, metr)
