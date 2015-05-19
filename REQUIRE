@@ -1,7 +1,5 @@
 julia 0.3-
 Dates
-FinancialSeries
-MarketTechnicals
 Match
 Reactive
-Docile
+

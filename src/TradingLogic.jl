@@ -4,11 +4,9 @@ else
     using Base.Dates
 end
 
-using Reactive, Match, FinancialSeries, MarketTechnicals
+using Reactive, Match
 
 module TradingLogic
-
-using Docile
 
 if VERSION < v"0.4-"
     using Dates
@@ -17,10 +15,6 @@ else
 end
 
 using Reactive, Match
-#using FinancialSeries, MarketTechnicals
-
-# doc-strings
-@document
 
 export runtrading!, tradeperfcurr, tradeperf, emptyblotter
 

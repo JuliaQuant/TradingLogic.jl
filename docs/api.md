@@ -11,7 +11,7 @@ Initialize empty blotter as an associative collection
 
 
 *source:*
-[TradingLogic/src/types.jl:53](https://github.com/JuliaQuant/TradingLogic.jl/tree/b82f55754e2d6d3add6c7dc86edaf722dbea4c46/src/types.jl#L53)
+[TradingLogic/src/types.jl:53](https://github.com/JuliaQuant/TradingLogic.jl/tree/39f157e013c05663572371cb58a144b9dd832304/src/types.jl#L53)
 
 ---
 
@@ -29,7 +29,7 @@ not required for running the trading session.
 
 
 *source:*
-[TradingLogic/src/performance.jl:206](https://github.com/JuliaQuant/TradingLogic.jl/tree/b82f55754e2d6d3add6c7dc86edaf722dbea4c46/src/performance.jl#L206)
+[TradingLogic/src/performance.jl:206](https://github.com/JuliaQuant/TradingLogic.jl/tree/39f157e013c05663572371cb58a144b9dd832304/src/performance.jl#L206)
 
 ## Internal
 
@@ -42,7 +42,7 @@ Returns `Symbol` in line with `Order`-type options for status-slot.
 
 
 *source:*
-[TradingLogic/src/exchange.jl:26](https://github.com/JuliaQuant/TradingLogic.jl/tree/b82f55754e2d6d3add6c7dc86edaf722dbea4c46/src/exchange.jl#L26)
+[TradingLogic/src/exchange.jl:26](https://github.com/JuliaQuant/TradingLogic.jl/tree/39f157e013c05663572371cb58a144b9dd832304/src/exchange.jl#L26)
 
 ---
 
@@ -51,7 +51,7 @@ Returns `Symbol` in line with `Order`-type options for status-slot.
 Cancel order request. Returns `Bool` request result.
 
 *source:*
-[TradingLogic/src/exchange.jl:66](https://github.com/JuliaQuant/TradingLogic.jl/tree/b82f55754e2d6d3add6c7dc86edaf722dbea4c46/src/exchange.jl#L66)
+[TradingLogic/src/exchange.jl:66](https://github.com/JuliaQuant/TradingLogic.jl/tree/39f157e013c05663572371cb58a144b9dd832304/src/exchange.jl#L66)
 
 ---
 
@@ -60,7 +60,7 @@ Cancel order request. Returns `Bool` request result.
 Submit new order. Returns order ID string or `FAIL`-string
 
 *source:*
-[TradingLogic/src/exchange.jl:47](https://github.com/JuliaQuant/TradingLogic.jl/tree/b82f55754e2d6d3add6c7dc86edaf722dbea4c46/src/exchange.jl#L47)
+[TradingLogic/src/exchange.jl:47](https://github.com/JuliaQuant/TradingLogic.jl/tree/39f157e013c05663572371cb58a144b9dd832304/src/exchange.jl#L47)
 
 ---
 
@@ -75,7 +75,7 @@ Returns: final profit/loss `Float64` scalar.
 
 
 *source:*
-[TradingLogic/src/performance.jl:164](https://github.com/JuliaQuant/TradingLogic.jl/tree/b82f55754e2d6d3add6c7dc86edaf722dbea4c46/src/performance.jl#L164)
+[TradingLogic/src/performance.jl:164](https://github.com/JuliaQuant/TradingLogic.jl/tree/39f157e013c05663572371cb58a144b9dd832304/src/performance.jl#L164)
 
 ---
 
@@ -84,7 +84,7 @@ Returns: final profit/loss `Float64` scalar.
 Empty order: no quantity
 
 *source:*
-[TradingLogic/src/types.jl:27](https://github.com/JuliaQuant/TradingLogic.jl/tree/b82f55754e2d6d3add6c7dc86edaf722dbea4c46/src/types.jl#L27)
+[TradingLogic/src/types.jl:27](https://github.com/JuliaQuant/TradingLogic.jl/tree/39f157e013c05663572371cb58a144b9dd832304/src/types.jl#L27)
 
 ---
 
@@ -95,7 +95,7 @@ use with (Bool, signal_t=0) tuple as initial fold value
 
 
 *source:*
-[TradingLogic/src/sigutils.jl:9](https://github.com/JuliaQuant/TradingLogic.jl/tree/b82f55754e2d6d3add6c7dc86edaf722dbea4c46/src/sigutils.jl#L9)
+[TradingLogic/src/sigutils.jl:9](https://github.com/JuliaQuant/TradingLogic.jl/tree/39f157e013c05663572371cb58a144b9dd832304/src/sigutils.jl#L9)
 
 ---
 
@@ -104,7 +104,7 @@ use with (Bool, signal_t=0) tuple as initial fold value
 Signed position change in the Order object
 
 *source:*
-[TradingLogic/src/types.jl:39](https://github.com/JuliaQuant/TradingLogic.jl/tree/b82f55754e2d6d3add6c7dc86edaf722dbea4c46/src/types.jl#L39)
+[TradingLogic/src/types.jl:39](https://github.com/JuliaQuant/TradingLogic.jl/tree/39f157e013c05663572371cb58a144b9dd832304/src/types.jl#L39)
 
 ---
 
@@ -113,7 +113,7 @@ Signed position change in the Order object
 Market state in goldencross strategy.
 
 *source:*
-[TradingLogic/src/strategies/goldencross.jl:2](https://github.com/JuliaQuant/TradingLogic.jl/tree/b82f55754e2d6d3add6c7dc86edaf722dbea4c46/src/strategies/goldencross.jl#L2)
+[TradingLogic/src/strategies/goldencross.jl:2](https://github.com/JuliaQuant/TradingLogic.jl/tree/39f157e013c05663572371cb58a144b9dd832304/src/strategies/goldencross.jl#L2)
 
 ---
 
@@ -124,7 +124,7 @@ with NaNs and last element `xinit`.
 
 
 *source:*
-[TradingLogic/src/sigutils.jl:43](https://github.com/JuliaQuant/TradingLogic.jl/tree/b82f55754e2d6d3add6c7dc86edaf722dbea4c46/src/sigutils.jl#L43)
+[TradingLogic/src/sigutils.jl:43](https://github.com/JuliaQuant/TradingLogic.jl/tree/39f157e013c05663572371cb58a144b9dd832304/src/sigutils.jl#L43)
 
 ---
 
@@ -133,7 +133,7 @@ with NaNs and last element `xinit`.
 Check if order status is `:pending`
 
 *source:*
-[TradingLogic/src/types.jl:30](https://github.com/JuliaQuant/TradingLogic.jl/tree/b82f55754e2d6d3add6c7dc86edaf722dbea4c46/src/types.jl#L30)
+[TradingLogic/src/types.jl:30](https://github.com/JuliaQuant/TradingLogic.jl/tree/39f157e013c05663572371cb58a144b9dd832304/src/types.jl#L30)
 
 ---
 
@@ -142,7 +142,7 @@ Check if order status is `:pending`
 Market state in luxor strategy
 
 *source:*
-[TradingLogic/src/strategies/luxor.jl:2](https://github.com/JuliaQuant/TradingLogic.jl/tree/b82f55754e2d6d3add6c7dc86edaf722dbea4c46/src/strategies/luxor.jl#L2)
+[TradingLogic/src/strategies/luxor.jl:2](https://github.com/JuliaQuant/TradingLogic.jl/tree/39f157e013c05663572371cb58a144b9dd832304/src/strategies/luxor.jl#L2)
 
 ---
 
@@ -151,7 +151,7 @@ Market state in luxor strategy
 Backtesting helper function: check if limit-price is reached
 
 *source:*
-[TradingLogic/src/exchange.jl:12](https://github.com/JuliaQuant/TradingLogic.jl/tree/b82f55754e2d6d3add6c7dc86edaf722dbea4c46/src/exchange.jl#L12)
+[TradingLogic/src/exchange.jl:12](https://github.com/JuliaQuant/TradingLogic.jl/tree/39f157e013c05663572371cb58a144b9dd832304/src/exchange.jl#L12)
 
 ---
 
@@ -160,7 +160,7 @@ Backtesting helper function: check if limit-price is reached
 Order status: backtesting version based on current price `pnow`
 
 *source:*
-[TradingLogic/src/exchange.jl:29](https://github.com/JuliaQuant/TradingLogic.jl/tree/b82f55754e2d6d3add6c7dc86edaf722dbea4c46/src/exchange.jl#L29)
+[TradingLogic/src/exchange.jl:29](https://github.com/JuliaQuant/TradingLogic.jl/tree/39f157e013c05663572371cb58a144b9dd832304/src/exchange.jl#L29)
 
 ---
 
@@ -169,7 +169,7 @@ Order status: backtesting version based on current price `pnow`
 Bool change signal, true when input signal changes
 
 *source:*
-[TradingLogic/src/sigutils.jl:16](https://github.com/JuliaQuant/TradingLogic.jl/tree/b82f55754e2d6d3add6c7dc86edaf722dbea4c46/src/sigutils.jl#L16)
+[TradingLogic/src/sigutils.jl:16](https://github.com/JuliaQuant/TradingLogic.jl/tree/39f157e013c05663572371cb58a144b9dd832304/src/sigutils.jl#L16)
 
 ---
 
@@ -178,7 +178,7 @@ Bool change signal, true when input signal changes
 Change order status to `:cancelled`
 
 *source:*
-[TradingLogic/src/types.jl:33](https://github.com/JuliaQuant/TradingLogic.jl/tree/b82f55754e2d6d3add6c7dc86edaf722dbea4c46/src/types.jl#L33)
+[TradingLogic/src/types.jl:33](https://github.com/JuliaQuant/TradingLogic.jl/tree/39f157e013c05663572371cb58a144b9dd832304/src/types.jl#L33)
 
 ---
 
@@ -196,7 +196,7 @@ In-place modifies `buffer` argument and returns updated one.
 
 
 *source:*
-[TradingLogic/src/sigutils.jl:33](https://github.com/JuliaQuant/TradingLogic.jl/tree/b82f55754e2d6d3add6c7dc86edaf722dbea4c46/src/sigutils.jl#L33)
+[TradingLogic/src/sigutils.jl:33](https://github.com/JuliaQuant/TradingLogic.jl/tree/39f157e013c05663572371cb58a144b9dd832304/src/sigutils.jl#L33)
 
 ---
 
@@ -205,7 +205,7 @@ In-place modifies `buffer` argument and returns updated one.
 Cancel pending order backtest version
 
 *source:*
-[TradingLogic/src/exchange.jl:69](https://github.com/JuliaQuant/TradingLogic.jl/tree/b82f55754e2d6d3add6c7dc86edaf722dbea4c46/src/exchange.jl#L69)
+[TradingLogic/src/exchange.jl:69](https://github.com/JuliaQuant/TradingLogic.jl/tree/39f157e013c05663572371cb58a144b9dd832304/src/exchange.jl#L69)
 
 ---
 
@@ -214,7 +214,7 @@ Cancel pending order backtest version
 New order submission: backtesting version.
 
 *source:*
-[TradingLogic/src/exchange.jl:50](https://github.com/JuliaQuant/TradingLogic.jl/tree/b82f55754e2d6d3add6c7dc86edaf722dbea4c46/src/exchange.jl#L50)
+[TradingLogic/src/exchange.jl:50](https://github.com/JuliaQuant/TradingLogic.jl/tree/39f157e013c05663572371cb58a144b9dd832304/src/exchange.jl#L50)
 
 ---
 
@@ -223,7 +223,7 @@ New order submission: backtesting version.
 Based on blotter only, ending at the last transaction timestamp.
 
 *source:*
-[TradingLogic/src/performance.jl:167](https://github.com/JuliaQuant/TradingLogic.jl/tree/b82f55754e2d6d3add6c7dc86edaf722dbea4c46/src/performance.jl#L167)
+[TradingLogic/src/performance.jl:167](https://github.com/JuliaQuant/TradingLogic.jl/tree/39f157e013c05663572371cb58a144b9dd832304/src/performance.jl#L167)
 
 ---
 
@@ -234,7 +234,7 @@ in chronological order (returns vector tuple).
 
 
 *source:*
-[TradingLogic/src/performance.jl:8](https://github.com/JuliaQuant/TradingLogic.jl/tree/b82f55754e2d6d3add6c7dc86edaf722dbea4c46/src/performance.jl#L8)
+[TradingLogic/src/performance.jl:8](https://github.com/JuliaQuant/TradingLogic.jl/tree/39f157e013c05663572371cb58a144b9dd832304/src/performance.jl#L8)
 
 ---
 
@@ -243,7 +243,7 @@ in chronological order (returns vector tuple).
 Ordered timestamps from blotter associative collection.
 
 *source:*
-[TradingLogic/src/performance.jl:2](https://github.com/JuliaQuant/TradingLogic.jl/tree/b82f55754e2d6d3add6c7dc86edaf722dbea4c46/src/performance.jl#L2)
+[TradingLogic/src/performance.jl:2](https://github.com/JuliaQuant/TradingLogic.jl/tree/39f157e013c05663572371cb58a144b9dd832304/src/performance.jl#L2)
 
 ---
 
@@ -252,5 +252,5 @@ Ordered timestamps from blotter associative collection.
 Order type
 
 *source:*
-[TradingLogic/src/types.jl:5](https://github.com/JuliaQuant/TradingLogic.jl/tree/b82f55754e2d6d3add6c7dc86edaf722dbea4c46/src/types.jl#L5)
+[TradingLogic/src/types.jl:5](https://github.com/JuliaQuant/TradingLogic.jl/tree/39f157e013c05663572371cb58a144b9dd832304/src/types.jl#L5)
 
