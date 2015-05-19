@@ -21,7 +21,7 @@ end
 
 "Print blotter transactions. Resembles DataFrames.printtable."
 function printblotter(io::IO, blotter::Dict{DateTime,(Int64,Float64)};
-                      dtformat::String = "yyy-mm-ddTHH:MM:SS",
+                      dtformat::String = "yyyy-mm-ddTHH:MM:SS",
                       separator::Char = ',', quotemark::Char = '"')
   # ordered timestamps
   vt = vtblotter(blotter)
@@ -75,12 +75,18 @@ end
 """
 Trade analysis for `blotter` provided as
 `DateTime => (Qty::Int64, FillPrice::Float64)` assoc. collection.
-Input `metrics` specifies what to calculate.
+Input `metrics` specifies what to calculate (PnL included already - others).
 Returns: tuple ( DateTime (ordered) array , assoc. collection of perf metrics ).
 Basic transaction info is also included (quantity, fill price).
+
+**CAUTION**: PnL and drawdown are calculated here based on the transaction blotter
+only, not the price history. Hence, price swing effects while holding
+an open position are not showing up in the results. Use `orderhandling!`
+output if performance metrics over the whole price history are needed
+(as typically done when analyzing PnL and drawdown).
 """
 function tradeperf(blotter::Dict{DateTime,(Int64,Float64)},
-                   metrics::Vector{Symbol})
+                   metrics::Vector{Symbol} = [:DDown])
   perfm = (Symbol=>Vector{Float64})[]
   ### TODO (later): accociative collections syntax changes in Julia 0.4
 
@@ -93,37 +99,44 @@ function tradeperf(blotter::Dict{DateTime,(Int64,Float64)},
   perfm[:Qty] = vqty
   perfm[:FillPrice] = vprc
 
-  # PnL vector
-  if findfirst(metrics, :PnL) > 0
-    vm = zeros(nt)
-    acsum = 0; pnlcsum = 0
-    for i = 2:nt
-      bprev = blotter[vt[i-1]]
+  # PnL and return-based drawdown (always calculating those metrics)
+  vpl = zeros(nt); vdd = zeros(nt)
+  acsum = 0; pnlcsum = 0.0; pnlcmax = 0.0
+  for i = 2:nt
+    bprev = blotter[vt[i-1]]
 
-      # lagged cumulative position held up to the current timestamp
-      @inbounds acsum += bprev[1]
+    # lagged cumulative position held up to the current timestamp
+    @inbounds acsum += bprev[1]
 
-      # cumulative profit/loss at the current timestamp
-      pnlcsum += acsum * (blotter[vt[i]][2] - bprev[2])
-      @inbounds vm[i] = pnlcsum
+    # cumulative profit/loss at the current timestamp
+    pnlcsum += acsum * (blotter[vt[i]][2] - bprev[2])
+    @inbounds vpl[i] = pnlcsum
+
+    # return-based drawdown
+    if pnlcsum > pnlcmax # positive or negative
+      pnlcmax = pnlcsum
     end
-    perfm[:PnL] = vm
+    @inbounds vdd[i] = pnlcsum - pnlcmax
+  end
+  perfm[:PnL] = vpl
+
+  # return-based drawdown
+  if findfirst(metrics, :DDown) > 0
+    perfm[:DDown] = vdd
   end
 
   return vt, perfm
 end
 
-"""
-Final profit/loss for `blotter` provided as
-`DateTime => (Qty::Int64, FillPrice::Float64)` assoc. collection.
-faster verision (minimizing memory allocation) to be used
-in e.g. parameter optimization workflow.
-Returns: final profit/loss `Float64` scalar.
-"""
-function tradepnlfinal(blotter::Dict{DateTime,(Int64,Float64)})
+"Cumulative position, profit/loss, last fill price for blotter."
+function apnlcum(blotter::Dict{DateTime,(Int64,Float64)})
   # timestamps in order
   vt = vtblotter(blotter)
   nt = length(vt)
+  if nt == 0
+    # no transactions yet
+    return 0, 0.0, 0.0
+  end
 
   acsum = 0; pnlcsum = 0
   for i = 2:nt
@@ -136,5 +149,58 @@ function tradepnlfinal(blotter::Dict{DateTime,(Int64,Float64)})
     pnlcsum += acsum * (blotter[vt[i]][2] - bprev[2])
   end
 
-  return pnlcsum
+  blast = blotter[vt[nt]]
+  return acsum + blast[1], pnlcsum, blast[2]
 end
+
+"""
+Final profit/loss for `blotter` provided as
+`DateTime => (Qty::Int64, FillPrice::Float64)` assoc. collection.
+Faster verision (minimizing memory allocation) to be used
+in e.g. parameter optimization workflow.
+
+Returns: final profit/loss `Float64` scalar.
+"""
+:tradepnlfinal
+
+"Based on blotter only, ending at the last transaction timestamp."
+tradepnlfinal(blotter::Dict{DateTime,(Int64,Float64)}) = apnlcum(blotter)[2]
+
+"Adding current price as the last timestamp."
+function tradepnlfinal(blotter::Dict{DateTime,(Int64,Float64)}, pnow::Float64)
+  # up to pcur
+  acsumb, pnlb, pblast = apnlcum(blotter)
+
+  # with pcur
+  return pnlb + acsumb * (pnow - pblast)
+end
+
+"Performance metrics helper function for use in foldl."
+function tradeperffold(perfprev::(Float64,Float64), statusnow::(Bool, Float64))
+  # current max. PnL
+  pnlprev = perfprev[1]
+  pnlnow = statusnow[2]
+  pnlcummax = pnlnow > pnlprev ? pnlnow : pnlprev
+
+  # current return-based drawdown
+  ddnow = abs(pnlnow - pnlcummax)
+
+  # maximum drawdown
+  ddprev = perfprev[2]
+  ddmax = ddnow > ddprev ? ddnow : ddprev
+
+  return pnlcummax, ddmax
+end
+
+"""
+Selected performance metrics from `runtrading!` signal output.
+
+Output tuple-signal components:
+
+* `Float64` cumulative maximum PnL;
+* `Float64` maximum drawdown over the entire trading session hisotry.
+
+NOTE: Use this function only if needed, otherwise save resources; it is
+not required for running the trading session.
+"""
+tradeperfcurr(s_status::Signal{(Bool, Float64)}) = foldl(tradeperffold, (0.0, 0.0), s_status)

@@ -46,7 +46,7 @@ facts("Trading metrics from transactions blotter") do
     blotter[DateTime(2015,1,2)] = (-(a1 + a2), pexit)
     pnlfin = a1*(p2 - p1) + (a1 + a2)*(pexit - p2)
 
-    metr = [:PnL]
+    metr = [:DDown]
     vt, perfm = TradingLogic.tradeperf(blotter, metr)
     ntrans = length(blotter)
     @fact length(vt) => ntrans
@@ -70,7 +70,7 @@ facts("Trading metrics from transactions blotter") do
     blotter[DateTime(2015,1,1,1)] = (a, pexit)
     pnlfin = -a*(pexit - pent)
 
-    metr = [:PnL]
+    metr = [:DDown]
     vt, perfm = TradingLogic.tradeperf(blotter, metr)
     ntrans = length(blotter)
     @fact length(vt) => ntrans
@@ -89,17 +89,26 @@ facts("Trading metrics from transactions blotter") do
     p1, p2, p3 = 120.0, 85.0, 70.0
     along, ashort = 50, 70
 
-    blotter[DateTime(2015,1,1,0)] = (along, p1)
-    blotter[DateTime(2015,1,1,1)] = (-(along + ashort), p2)
-    blotter[DateTime(2015,1,2)] = (0, p3) # e.g. stop backtest point
     losslong = along*(p2 - p1)
     pnlfin = losslong + ashort*(p2 - p3)
 
-    metr = [:PnL]
+    blotter[DateTime(2015,1,1,0)] = (along, p1)
+    blotter[DateTime(2015,1,1,1)] = (-(along + ashort), p2)
+
+    # not yet final PnL with incomplete blotter
+    @fact abs(TradingLogic.tradepnlfinal(blotter) - pnlfin) > 10.0 => true
+    # test tradepnlfinal method with pnow: final PnL
+    #  doing this before adding the final (exit) transaction to blotter
+    @fact TradingLogic.tradepnlfinal(blotter, p3) => roughly(pnlfin)
+
+    # final transaction (e.g. stop backtest point)
+    blotter[DateTime(2015,1,2)] = (0, p3)
+
+    metr = [:DDown]
     vt, perfm = TradingLogic.tradeperf(blotter, metr)
+    #println(vt, perfm)
     ntrans = length(blotter)
     @fact length(vt) => ntrans
-
     @fact length(perfm[:PnL]) => ntrans
 
     @fact perfm[:Qty] => [along, -(along + ashort), 0]
@@ -107,6 +116,29 @@ facts("Trading metrics from transactions blotter") do
 
     @fact perfm[:PnL] => roughly([0.0, losslong, pnlfin])
     @fact TradingLogic.tradepnlfinal(blotter) => roughly(pnlfin)
-    #println(vt, perfm)
+
+    # return-based drawdown
+    ddmax = abs(losslong)
+    @fact perfm[:DDown] => roughly([0.0, -ddmax, -abs(pnlfin)])
+  end
+end
+
+facts("Running performance metrics") do
+  context("Current maximum PnL and drawdown over trading history") do
+    pnl_dd_max = TradingLogic.tradeperffold((10.0, 0.0), (true, 15.0))
+    @fact pnl_dd_max[1] => roughly(15.0)
+    @fact pnl_dd_max[2] => roughly(0.0)
+
+    pnl_dd_max = TradingLogic.tradeperffold((10.0, 20.0), (true, 15.0))
+    @fact pnl_dd_max[1] => roughly(15.0)
+    @fact pnl_dd_max[2] => roughly(20.0)
+
+    pnl_dd_max = TradingLogic.tradeperffold((10.0, 0.0), (true, 5.0))
+    @fact pnl_dd_max[1] => roughly(10.0)
+    @fact pnl_dd_max[2] => roughly(5.0)
+
+    pnl_dd_max = TradingLogic.tradeperffold((10.0, 50.0), (true, 5.0))
+    @fact pnl_dd_max[1] => roughly(10.0)
+    @fact pnl_dd_max[2] => roughly(50.0)
   end
 end

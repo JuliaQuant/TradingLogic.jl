@@ -63,13 +63,17 @@ facts("Luxor strategy backtesting") do
     ohlc_inds[:low] = 3
     ohlc_inds[:close] = 4
 
-    # backtest at close price
-    s_pnow = Reactive.lift(s -> s[2][ohlc_inds[:close]], s_ohlc, typ=Float64)
+    # backtest at next-open price
+    # quantstrat fills tracsactions at next open on enter-signal
+    s_pnow = Reactive.lift(s -> s[2][ohlc_inds[:open]], s_ohlc, typ=Float64)
     blotter = TradingLogic.emptyblotter()
 
     s_status = TradingLogic.runtrading!(
       blotter, true, s_ohlc, ohlc_inds, s_pnow, 0,
       TradingLogic.luxortarget, mafast, maslow, pthresh, targetqty)
+
+    s_perf = TradingLogic.tradeperfcurr(s_status)
+
     for i = 2:length(ohlc)
       push!(s_ohlc, (Dates.DateTime(ohlc.timestamp[i]),
                      vec(ohlc.values[i,:])))
@@ -78,7 +82,7 @@ facts("Luxor strategy backtesting") do
     TradingLogic.printblotter(STDOUT, blotter)
 
 
-    metr = [:PnL]
+    metr = [:DDown]
     vt, perfm = TradingLogic.tradeperf(blotter, metr)
     println(vt)
     println(perfm)

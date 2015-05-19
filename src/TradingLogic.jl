@@ -22,7 +22,7 @@ using Reactive, Match
 # doc-strings
 @document
 
-export runtrading!
+export runtrading!, tradeperfcurr, tradeperf, emptyblotter
 
 # general components
 include("sigutils.jl")
@@ -53,8 +53,13 @@ most commonly be trading strategy parameters.
 
 In-place modifies `blotter` (adds transactions to it).
 
-Returns `Bool`-signal for the overall status of the trading system
-(false if problems are detected).
+Returns tuple-signal with:
+
+* the overall status of the trading system (false if problems are detected);
+* current cumulative profit/loss since the signals were initiated (i.e. since
+the beginning of the trading session).
+
+See `orderhandling!` for the PnL details.
 """
 function runtrading!(blotter::Dict{DateTime,(Int64,Float64)},
                      backtest::Bool,
@@ -73,13 +78,8 @@ function runtrading!(blotter::Dict{DateTime,(Int64,Float64)},
   s_target = apply(targetfun, tuple(s_ohlc, ohlc_inds,
                                     position_actual_mut, strategy_args...))
 
-  # current time signal
-  if backtest
-    s_tnow = Reactive.lift(s -> s[1], s_ohlc, typ=DateTime)
-  else
-    # system time when instantaneous price updates
-    s_tnow = Reactive.lift(s -> unix2datetime(time()), s_pnow, typ=DateTime)
-  end
+  # current time signal from OHLC timestamp
+  s_tnow = Reactive.lift(s -> s[1], s_ohlc, typ=DateTime)
 
   # general order handling part
   order_current = emptyorder()
@@ -88,9 +88,9 @@ function runtrading!(blotter::Dict{DateTime,(Int64,Float64)},
                                         position_actual_mut,
                                         order_current,
                                         blotter, backtest),
-    s_target, s_pnow, s_tnow, typ=Bool)
+    s_target, s_pnow, s_tnow, typ=(Bool,Float64))
   # error notification
-  lift(tradesyserror, s_overallstatus, typ=Bool)
+  lift(s -> tradesyserror(s[1]), s_overallstatus, typ=Bool)
 
   return s_overallstatus
 end

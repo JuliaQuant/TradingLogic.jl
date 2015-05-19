@@ -95,13 +95,19 @@ facts("Goldencross strategy backtesting") do
     s_status = TradingLogic.runtrading!(
       blotter, true, s_ohlc, ohlc_inds, s_pnow, 0,
       TradingLogic.goldencrosstarget, targetqty, mafast, maslow)
+
+    s_perf = TradingLogic.tradeperfcurr(s_status)
+
     for i = 2:length(ohlc_test)
       push!(s_ohlc, (Dates.DateTime(ohlc_test.timestamp[i]),
                      vec(ohlc_test.values[i,:])))
+      #println(s_perf.value)
     end
+    # no errors
+    @fact s_status.value[1] => true
 
     #TradingLogic.printblotter(STDOUT, blotter)
-    metr = [:PnL]
+    metr = [:DDown]
     vt, perfm = TradingLogic.tradeperf(blotter, metr)
     #println(vt)
     #println(perfm[:PnL])
@@ -114,11 +120,25 @@ facts("Goldencross strategy backtesting") do
 
     # profit loss over time
     @fact perfm[:PnL] => roughly(vpnlcum)
+    #println(perfm)
 
-    # total profit loss:
-    # exit for cumulative statistics at the end date
-    blotter[DateTime(date_final)] = (-sum(perfm[:Qty]), s_ohlc.value[1])
     # quantstrat/goldencross/results_summary.txt
-    @fact TradingLogic.tradepnlfinal(blotter) => roughly(2211.0)
+    pnlnet = 2211.0 # Net.Trading.PL
+    ddownmax = 17374.0 # Max.Drawdown
+
+    # not final PnL without exit yet
+    @fact TradingLogic.tradepnlfinal(blotter) - pnlnet > 10.0 => true
+    # but final PnL if exit price is given: last timestep close price
+    pfinal = s_ohlc.value[2][ohlc_inds[:close]]
+    @fact TradingLogic.tradepnlfinal(blotter, pfinal) => roughly(pnlnet)
+
+    # add exit to blotter for cumulative statistics at the end date
+    blotter[DateTime(date_final)] = (-sum(perfm[:Qty]), pfinal)
+
+    @fact TradingLogic.tradepnlfinal(blotter) => roughly(pnlnet)
+    # perfm[:DDown] does not have the true max. drawdown
+    # as it is only blotter timesteps based;
+    # use performance metrics signal for that
+    @fact s_perf.value[2] => roughly(ddownmax)
   end
 end

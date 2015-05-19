@@ -69,11 +69,20 @@ Input:
 - current/instantaneous price `pnow`
 - current time `tnow`; for backtest, the time corresponding to `targ`
 (i.e. the current OHLC step/bar time).
-...
+
 In-place modifies:
- `position_actual_mut` vector, `ordcurr` object,
- and `backtestblotter` associative collection.
-Returns `Bool` system status.
+
+* `position_actual_mut` vector;
+* `ordcurr` object;
+* `backtestblotter` associative collection.
+
+Returns tuple with:
+
+* `Bool` system status;
+* `Float64` current cumulative profit/loss.
+
+NOTE: As opposed to `tradeperf` function, here total PnL is updated
+at each price change time-point.
 """
 function orderhandling!(targ::(Int64, Vector{Float64}),
                         pnow::Float64, tnow::DateTime,
@@ -100,7 +109,7 @@ function orderhandling!(targ::(Int64, Vector{Float64}),
         ordcurr.status = resp
         stillpending = false
         # need to re-evaluate target now that position changed
-        return true
+        return true, tradepnlfinal(blotter, pnow)
       elseif resp == :pending
         stillpending = true
       else
@@ -138,7 +147,7 @@ function orderhandling!(targ::(Int64, Vector{Float64}),
 #       #position_actual = posact + getorderposchg(ordcurr)
 #       position_actual_mut[1] = posact + getorderposchg(ordcurr)
 #     #need to re-evaluate target now that position changed
-#         return true
+#         return true, tradepnlfinal(blotter, pnow)
 #       ### add new row to blotter here ###############################
 
 #       # record different order status
@@ -169,13 +178,13 @@ function orderhandling!(targ::(Int64, Vector{Float64}),
       end
       if respstatus
         setcancelled!(ordcurr)
-        return respstatus
+        return respstatus, tradepnlfinal(blotter, pnow)
       else
-        return respstatus
+        return respstatus, tradepnlfinal(blotter, pnow)
       end
     end
     # no pending orders, hold current position
-    return true
+    return true, tradepnlfinal(blotter, pnow)
   end
 
   # pending order (if any) must be in line with the target
@@ -183,13 +192,13 @@ function orderhandling!(targ::(Int64, Vector{Float64}),
     if getorderposchg(ordcurr) == targ[1]
       if length(targ[2]) < 1 && ordcurr.ordertype == :market
         # let the order continue as is
-        return true
+        return true, tradepnlfinal(blotter, pnow)
       end
       if length(targ[2]) == 1 && ordcurr.ordertype == :limit
         # check if limit prices match
         if isapprox(targ[2][1], ordcurr.price)
           # let the order continue as is
-          return true
+          return true, tradepnlfinal(blotter, pnow)
         end
       end
       # otherwise no complete match between pending and target
@@ -201,9 +210,9 @@ function orderhandling!(targ::(Int64, Vector{Float64}),
       end
       if respstatus
         setcancelled!(ordcurr)
-        return respstatus
+        return respstatus, tradepnlfinal(blotter, pnow)
       else
-        return respstatus
+        return respstatus, tradepnlfinal(blotter, pnow)
       end
     else
       # cancel pending order not in line with the target
@@ -214,9 +223,9 @@ function orderhandling!(targ::(Int64, Vector{Float64}),
       end
       if respstatus
         setcancelled!(ordcurr)
-        return respstatus
+        return respstatus, tradepnlfinal(blotter, pnow)
       else
-        return respstatus
+        return respstatus, tradepnlfinal(blotter, pnow)
       end
     end
   end
@@ -227,27 +236,28 @@ function orderhandling!(targ::(Int64, Vector{Float64}),
     if targ[1] > 0
       # buy: instantaneous price must exceed the stop-price
       if pnow >= targ[2][2]
-        return targ2order!(ordcurr,
+        return (targ2order!(ordcurr,
                            (targ[1], targ[2][1:1]),
                            "buy-side software-stop",
-                           posact, backtest)
+                           posact, backtest), tradepnlfinal(blotter, pnow))
       end
     else
       # sell: instantaneous price must be below the stop-price
       if pnow <= targ[2][2]
-        return targ2order!(ordcurr,
+        return (targ2order!(ordcurr,
                            (targ[1], targ[2][1:1]),
                            "sell-side software-stop",
-                           posact, backtest)
+                           posact, backtest), tradepnlfinal(blotter, pnow))
       end
     end
   elseif length(targ[2]) < 2
     # limit or market order
-    return targ2order!(ordcurr, targ, "limitormarket", posact, backtest)
+    return (targ2order!(ordcurr, targ, "limitormarket", posact, backtest),
+            tradepnlfinal(blotter, pnow))
   else
     warn("orderhandling! does not handle $targ")
-    return false
+    return false, tradepnlfinal(blotter, pnow)
   end
 
-  return true
+  return true, tradepnlfinal(blotter, pnow)
 end

@@ -76,31 +76,35 @@ facts("Order handling based on target input") do
   blotter = TradingLogic.emptyblotter()
   backtest = true
 
+  penter, pexit = 150.0, 110.0
+  qty = 10
+  shortgain = -(pexit - penter) * qty
+
   context("Order handling: pending order now complete") do
     # any target (irrelevant at this step -> evaluated next step)
     targ = (0, Array(Float64, 0))
 
     # market order was pending
-    ord = TradingLogic.Order("neg", 10, NaN, :sell,
+    ord = TradingLogic.Order("neg", qty, NaN, :sell,
                              :market, :pending, "aux")
     @fact TradingLogic.ispending(ord) => true
     @fact TradingLogic.orderhandling!(
-      targ, 150.0, tinit, posactual, ord,
-      blotter, backtest) => true
+      targ, penter, tinit, posactual, ord,
+      blotter, backtest) => (true, 0.0)
     # position updated, no new order generated yet
     # (need to re-evaluate target after position update)
-    @fact blotter[tinit] => (-10, 150.0)
+    @fact blotter[tinit] => (-qty, penter)
     @fact TradingLogic.ispending(ord) => false
-    @fact posactual[1] => -10
+    @fact posactual[1] => -qty
 
     # same with limit-order that was pending
     #  and is satisfied at current price
-    ord = TradingLogic.Order("pos", 10, 120.0, :buy,
+    ord = TradingLogic.Order("pos", qty, 120.0, :buy,
                              :limit, :pending, "aux")
     @fact TradingLogic.ispending(ord) => true
     @fact TradingLogic.orderhandling!(
-      targ, 110.0, tnow(), posactual, ord,
-      blotter, backtest) => true
+      targ, pexit, tnow(), posactual, ord,
+      blotter, backtest) => (true, shortgain)
     # position updated, no new order generated yet
     # (need to re-evaluate target after position update)
     @fact TradingLogic.ispending(ord) => false
@@ -116,7 +120,7 @@ facts("Order handling based on target input") do
     @fact TradingLogic.ispending(ord) => false
     @fact TradingLogic.orderhandling!(
       targ, 100.0, tnow(), posactual, ord,
-      blotter, backtest) => true
+      blotter, backtest) => (true, shortgain)
     # now still nothing pending, actual position is the same
     @fact TradingLogic.ispending(ord) => false
     @fact posactual[1] => 0
@@ -127,7 +131,7 @@ facts("Order handling based on target input") do
     @fact TradingLogic.ispending(ord) => true
     @fact TradingLogic.orderhandling!(
       targ, 100.0, tnow(), posactual, ord,
-      blotter, backtest) => true
+      blotter, backtest) => (true, shortgain)
     # now pending order gets cancelled
     @fact TradingLogic.ispending(ord) => false
     @fact ord.status => :cancelled
@@ -143,7 +147,7 @@ facts("Order handling based on target input") do
     @fact TradingLogic.ispending(ord) => false
     @fact TradingLogic.orderhandling!(
       targ, 100.0, tnow(), posactual, ord,
-      blotter, backtest) => true
+      blotter, backtest) => (true, shortgain)
     # now pending, actual position still the same
     @fact TradingLogic.ispending(ord) => true
     @fact ord.ordertype => :market
@@ -155,7 +159,7 @@ facts("Order handling based on target input") do
     @fact TradingLogic.ispending(ord) => true
     @fact TradingLogic.orderhandling!(
       targ, 100.0, tnow(), posactual, ord,
-      blotter, backtest) => true
+      blotter, backtest) => (true, shortgain)
     # now market target so cancel pending order
     @fact TradingLogic.ispending(ord) => false
     @fact ord.status => :cancelled
@@ -171,7 +175,7 @@ facts("Order handling based on target input") do
     @fact TradingLogic.ispending(ord) => false
     @fact TradingLogic.orderhandling!(
       targ, 100.0, tnow(), posactual, ord,
-      blotter, backtest) => true
+      blotter, backtest) => (true, shortgain)
     # now limit pending, actual position still the same
     @fact TradingLogic.ispending(ord) => true
     @fact ord.ordertype => :limit
@@ -184,7 +188,7 @@ facts("Order handling based on target input") do
                              :limit, :pending, "aux")
     @fact TradingLogic.orderhandling!(
       targ, 100.0, tnow(), posactual, ord,
-      blotter, backtest) => true
+      blotter, backtest) => (true, shortgain)
     # leave it pending
     @fact TradingLogic.ispending(ord) => true
     @fact ord.ordertype => :limit
@@ -197,7 +201,7 @@ facts("Order handling based on target input") do
                              :limit, :pending, "aux")
     @fact TradingLogic.orderhandling!(
       targ, 100.0, tnow(), posactual, ord,
-      blotter, backtest) => true
+      blotter, backtest) => (true, shortgain)
     # cancel different order
     @fact TradingLogic.ispending(ord) => false
     @fact ord.status => :cancelled
@@ -210,7 +214,7 @@ facts("Order handling based on target input") do
                              :limit, :pending, "aux")
     @fact TradingLogic.orderhandling!(
       targ, 70.0, tnow(), posactual, ord,
-      blotter, backtest) => true
+      blotter, backtest) => (true, shortgain)
     # cancel different order
     @fact TradingLogic.ispending(ord) => false
     @fact ord.status => :cancelled
@@ -223,7 +227,7 @@ facts("Order handling based on target input") do
                              :limit, :pending, "aux")
     @fact TradingLogic.orderhandling!(
       targ, 100.0, tnow(), posactual, ord,
-      blotter, backtest) => true
+      blotter, backtest) => (true, shortgain)
     # cancel different order
     @fact TradingLogic.ispending(ord) => false
     @fact ord.status => :cancelled
@@ -240,7 +244,7 @@ facts("Order handling based on target input") do
     @fact TradingLogic.ispending(ord) => false
     @fact TradingLogic.orderhandling!(
       targ, 70.0, tnow(), posactual, ord,
-      blotter, backtest) => true
+      blotter, backtest) => (true, shortgain)
     # no change, keep tracking the price
     @fact TradingLogic.ispending(ord) => false
     @fact posactual[1] => 0
@@ -251,7 +255,7 @@ facts("Order handling based on target input") do
     @fact TradingLogic.ispending(ord) => false
     @fact TradingLogic.orderhandling!(
       targ, 75.1, tnow(), posactual, ord,
-      blotter, backtest) => true
+      blotter, backtest) => (true, shortgain)
     # now limit pending, actual position still the same
     @fact TradingLogic.ispending(ord) => true
     @fact ord.ordertype => :limit
@@ -265,7 +269,7 @@ facts("Order handling based on target input") do
                              :limit, :pending, "aux")
     @fact TradingLogic.orderhandling!(
       targ, 70.0, tnow(), posactual, ord,
-      blotter, backtest) => true
+      blotter, backtest) => (true, shortgain)
     # cancel previous order, keep tracking the price
     @fact TradingLogic.ispending(ord) => false
     @fact ord.status => :cancelled
@@ -281,7 +285,7 @@ facts("Order handling based on target input") do
                              :limit, :pending, "aux")
     @fact TradingLogic.orderhandling!(
       targ, 75.1, tnow(), posactual, ord,
-      blotter, backtest) => true
+      blotter, backtest) => (true, shortgain)
     # cancel previous order with different limit-price
     @fact TradingLogic.ispending(ord) => false
     @fact ord.status => :cancelled
@@ -298,7 +302,7 @@ facts("Order handling based on target input") do
     @fact TradingLogic.ispending(ord) => false
     @fact TradingLogic.orderhandling!(
       targ, 80.0, tnow(), posactual, ord,
-      blotter, backtest) => true
+      blotter, backtest) => (true, shortgain)
     # no change, keep tracking the price
     @fact TradingLogic.ispending(ord) => false
     @fact posactual[1] => 0
@@ -309,7 +313,7 @@ facts("Order handling based on target input") do
     @fact TradingLogic.ispending(ord) => false
     @fact TradingLogic.orderhandling!(
       targ, 74.9, tnow(), posactual, ord,
-      blotter, backtest) => true
+      blotter, backtest) => (true, shortgain)
     # now limit pending, actual position still the same
     @fact TradingLogic.ispending(ord) => true
     @fact ord.ordertype => :limit
@@ -323,7 +327,7 @@ facts("Order handling based on target input") do
                              :limit, :pending, "aux")
     @fact TradingLogic.orderhandling!(
       targ, 80.0, tnow(), posactual, ord,
-      blotter, backtest) => true
+      blotter, backtest) => (true, shortgain)
     # cancel previous order, keep tracking the price
     @fact TradingLogic.ispending(ord) => false
     @fact ord.status => :cancelled
@@ -339,7 +343,7 @@ facts("Order handling based on target input") do
                              :limit, :pending, "aux")
     @fact TradingLogic.orderhandling!(
       targ, 74.9, tnow(), posactual, ord,
-      blotter, backtest) => true
+      blotter, backtest) => (true, shortgain)
     # cancel previous order with different limit-price
     @fact TradingLogic.ispending(ord) => false
     @fact ord.status => :cancelled
