@@ -24,6 +24,11 @@ Run all tests and re-generate API documentation before each commit to the ``mast
 *Re-generate docstrings* (Julia): ::
 
     using Lexicon, TradingLogic
+    
+    # verify docstring parsing list
+    Docile.Cache.getraw(TradingLogic)
+    
+    # generate Markdown documentation file
     save("docs/api.md", TradingLogic)
 
 Generate ``rst``-file for the documentation system (shell): ::
