@@ -19,6 +19,23 @@ function vapblotter(blotter::Dict{DateTime,(Int64,Float64)})
   return vqty, vprc
 end
 
+"Print a text line from string vector."
+function printvecstring(io, vstring::Vector,
+                        separator::Char, quotemark::Char)
+  p = length(vstring)
+  for j in 1:p
+    print(io, quotemark)
+    print(io, vstring[j])
+    print(io, quotemark)
+    if j < p
+      print(io, separator)
+    else
+      print(io, '\n')
+    end
+  end
+  return
+end
+
 "Print blotter transactions. Resembles DataFrames.printtable."
 function printblotter(io::IO, blotter::Dict{DateTime,(Int64,Float64)};
                       dtformat::String = "yyyy-mm-ddTHH:MM:SS",
@@ -27,21 +44,9 @@ function printblotter(io::IO, blotter::Dict{DateTime,(Int64,Float64)};
   vt = vtblotter(blotter)
   nt = length(vt)
 
-  # column names
+  # column names: print header
   cnames = ["Timestamp", "Amount", "Price"]
-  p = length(cnames)
-
-  # print header
-  for j in 1:p
-    print(io, quotemark)
-    print(io, cnames[j])
-    print(io, quotemark)
-    if j < p
-      print(io, separator)
-    else
-      print(io, '\n')
-    end
-  end
+  printvecstring(io, cnames, separator, quotemark)
 
   # print contents
   for ti in vt
