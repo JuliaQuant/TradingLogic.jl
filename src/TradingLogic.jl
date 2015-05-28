@@ -16,7 +16,7 @@ end
 
 using Reactive, Match, TimeSeries
 
-export runtrading!, runbacktest, tradeperfcurr, tradeperf
+export runtrading!, runbacktest, tradeperfcurr, tradeperf, tradepnlfinal
 export emptyblotter, printblotter, writeblotter
 
 # general components
@@ -181,7 +181,7 @@ function runbacktest{M}(ohlc_ta::TimeSeries.TimeArray{Float64,2,M},
   # finalize perf. metrics at the last step close-price
   pfinal = s_ohlc.value[2][ohlc_inds[:close]]
   pnlfin = tradepnlfinal(blotter, pfinal)
-  pnlmax = s_perf.value[1] > pnlfin ? s_perf.value[2] : pnlfin
+  pnlmax = s_perf.value[1] > pnlfin ? s_perf.value[1] : pnlfin
   ddownfin = pnlfin - pnlmax
   ddownmax = s_perf.value[2] > ddownfin ? s_perf.value[2] : ddownfin
 
