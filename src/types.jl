@@ -55,6 +55,18 @@ emptyblotter() = (DateTime=>(Int64,Float64))[]
 
 
 
+# "Completed (closed) trade type."
+# immutable ClosedTrade
+#   topen::DateTime
+#   tclose::DateTime
+#   popen::Float64
+#   pclose::Float64
+#   tradeside::Symbol
+#   tradequantity::Int64
+# end
+
+
+
 # """
 # Array-like type keeping all open trades,
 # thus holding current (actual) position information with open prices.

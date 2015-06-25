@@ -16,8 +16,9 @@ end
 
 using Reactive, Match, TimeSeries
 
-export runtrading!, runbacktest, tradeperfcurr, tradeperf, tradepnlfinal
+export runtrading!, runbacktest
 export emptyblotter, printblotter, writeblotter
+export tradeperfcurr, tradeperf, tradepnlfinal, vtradespnl, perf_prom
 
 # general components
 include("sigutils.jl")

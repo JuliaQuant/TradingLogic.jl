@@ -1,7 +1,6 @@
 using FactCheck
 using MarketData
 using DataFrames
-#using TradingLogic
 
 include("signals.jl")
 include("orders.jl")

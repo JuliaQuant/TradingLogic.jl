@@ -142,3 +142,99 @@ facts("Running performance metrics") do
     @fact pnl_dd_max[2] => roughly(50.0)
   end
 end
+
+facts("Trades and corresponding metrics from transactions blotter") do
+  blotter = TradingLogic.emptyblotter()
+  dthour(h::Int64) = Dates.DateTime(2015,6,1,h)
+  blotter[dthour(1)] = (25, 85.0)
+  blotter[dthour(2)] = (25, 95.0)
+  blotter[dthour(3)] = (-60, 100.0)
+  blotter[dthour(4)] = (20, 80.0)
+  blotter[dthour(5)] = (-10, 75.0)
+  blotter[dthour(6)] = (10, 85.0)
+  blotter[dthour(7)] = (-10, 70.0)
+  blotter[dthour(8)] = (-50, 65.0)
+  blotter[dthour(11)] = (50, 25.0)
+  # open trade
+  blotter[dthour(12)] = (20, 35.0)
+  #TradingLogic.printblotter(STDOUT, blotter)
+  @fact TradingLogic.tradepnlfinal(blotter) => roughly(2500.0)
+
+  context("Trades PnL vector with selected metrics from blotter") do
+    vtrpnl, ntrpos, avwin, ntrneg, avloss = TradingLogic.vtradespnl(blotter)
+    @fact length(vtrpnl) => 5
+    @fact sum(vtrpnl) => roughly(2500.0)
+    @fact ntrpos => 3
+    @fact avwin => roughly(900.0)
+    @fact ntrneg => 2
+    @fact avloss => roughly(100.0)
+  end
+
+  context("Trades-based performance metrics: PROM") do
+    marg = 5e3
+
+    # no transactions
+    @fact TradingLogic.perf_prom(
+      TradingLogic.emptyblotter()) => roughly(0.0)
+
+    # from blotter, using all completed trades
+    prom0 = ((3.0 - sqrt(3.0))*900.0 - (2.0 + sqrt(2.0))*100.0)/marg
+    @fact TradingLogic.perf_prom(blotter, marg=marg) => roughly(prom0)
+
+    # removing specific number of best wins
+    prom1 = ((2.0 - sqrt(2.0))*350.0 - (2.0 + sqrt(2.0))*100.0)/marg
+    @fact TradingLogic.perf_prom(blotter, marg=marg,
+                                 nbest_remove = 1) => roughly(prom1)
+
+    # from trades PnL vector
+    vtrpnl, ntrpos, avwin, ntrneg, avloss = TradingLogic.vtradespnl(blotter)
+    @fact TradingLogic.perf_prom(vtrpnl, marg=marg,
+                                 nbest_remove = 1) => roughly(prom1)
+    prom2 = -(2.0 + sqrt(2.0))*100.0/marg
+    @fact TradingLogic.perf_prom(vtrpnl, marg=marg,
+                                 nbest_remove = 2) => roughly(prom2)
+    # if asking to remove more best wins than the total number of wins
+    prom = TradingLogic.perf_prom(vtrpnl, marg=marg, nbest_remove = 5)
+    # -Inf
+    @fact prom < 0.0 => true
+    @fact isfinite(prom) => false
+    prom = TradingLogic.perf_prom(vtrpnl, marg=marg, nbest_remove = 6)
+    # -Inf
+    @fact prom < 0.0 => true
+    @fact isfinite(prom) => false
+  end
+
+  context("Trades-based performance metrics: PROR") do
+    pror0 = (3.0 - sqrt(3.0))*900.0 / ((2.0 + sqrt(2.0))*100.0)
+    @fact TradingLogic.perf_prom(blotter, pror=true) => roughly(pror0)
+    pror1 = (2.0 - sqrt(2.0))*350.0 / ((2.0 + sqrt(2.0))*100.0)
+    @fact TradingLogic.perf_prom(blotter, pror=true,
+                                 nbest_remove = 1) => roughly(pror1)
+
+    # PROR without profits
+    @fact TradingLogic.perf_prom(TradingLogic.emptyblotter(),
+                                 pror=true) => roughly(0.0)
+    @fact TradingLogic.perf_prom(Array(Float64,0), pror=true) => roughly(0.0)
+    @fact TradingLogic.perf_prom([-2.0], pror=true) => roughly(0.0)
+    pror = TradingLogic.perf_prom([-2.0], pror=true, nbest_remove = 1)
+    # -Inf
+    @fact pror < 0.0 => true
+    @fact isfinite(pror) => false
+
+    # PROR without profits or losses: 1 - sqrt(1)
+    @fact TradingLogic.perf_prom([5.0, -2.0], pror=true) => roughly(0.0)
+    @fact TradingLogic.perf_prom([5.0, -2.0], pror=true,
+                                 nbest_remove = 1) => roughly(0.0)
+    # PROR without losses
+    pror = TradingLogic.perf_prom([5.0, 2.0], pror=true, nbest_remove = 0)
+    # +Inf
+    @fact pror < 0.0 => false
+    @fact isfinite(pror) => false
+    @fact TradingLogic.perf_prom([5.0, 2.0], pror=true,
+                                 nbest_remove = 1) => roughly(0.0)
+    pror = TradingLogic.perf_prom([5.0, 2.0], pror=true, nbest_remove = 2)
+    # -Inf
+    @fact pror < 0.0 => true
+    @fact isfinite(pror) => false
+  end
+end
