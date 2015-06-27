@@ -46,7 +46,7 @@ function goldencrossposlogic(mktstate::Symbol,
 end
 
 "Target signal for goldencross strategy."
-function goldencrosstarget(s_ohlc::Input{(DateTime,Vector{Float64})},
+function goldencrosstarget(s_ohlc::Input{OHLC},
                            ohlc_inds::Dict{Symbol,Int64},
                            position_actual_mut::Vector{Int64},
                            targetqty::Int64,
@@ -56,7 +56,7 @@ function goldencrosstarget(s_ohlc::Input{(DateTime,Vector{Float64})},
   targetqty > 0 || error("target quantity must be positive")
 
   # signals updating at each timestep (aka OHLC bar)
-  buffpclose!(buff::Vector{Float64}, tohlc::(DateTime,Vector{Float64})) =
+  buffpclose!(buff::Vector{Float64}, tohlc::OHLC) =
     sighistbuffer!(buff, tohlc[2][ohlc_inds[:close]])
   pcloseinit = s_ohlc.value[2][ohlc_inds[:close]]
   s_sma_fast = lift(mean,

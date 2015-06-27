@@ -1,11 +1,13 @@
+include("types.jl")
+
 "Ordered timestamps from blotter associative collection."
-vtblotter(blotter::Dict{DateTime,(Int64,Float64)}) = sort!(collect(keys(blotter)))
+vtblotter(blotter::Blotter) = sort!(collect(keys(blotter)))
 
 """
 Amount `Vector{Int64)` and price `Vector{Float64)` from blotter
 in chronological order (returns vector tuple).
 """
-function vapblotter(blotter::Dict{DateTime,(Int64,Float64)})
+function vapblotter(blotter::Blotter)
   vt = vtblotter(blotter)
   nt = length(vt)
   vqty = Array(Int64, nt)
@@ -37,7 +39,7 @@ function printvecstring(io, vstring::Vector,
 end
 
 "Print blotter transactions. Resembles DataFrames.printtable."
-function printblotter(io::IO, blotter::Dict{DateTime,(Int64,Float64)};
+function printblotter(io::IO, blotter::Blotter;
                       dtformat::String = "yyyy-mm-ddTHH:MM:SS",
                       separator::Char = ',', quotemark::Char = '"')
   # ordered timestamps
@@ -67,7 +69,7 @@ function printblotter(io::IO, blotter::Dict{DateTime,(Int64,Float64)};
 end
 
 "Write blotter transactions to file."
-function writeblotter(filename::String, blotter::Dict{DateTime,(Int64,Float64)};
+function writeblotter(filename::String, blotter::Blotter;
                       dtformat::String = "yyy-mm-ddTHH:MM:SS",
                       separator::Char = ',', quotemark::Char = '"')
   open(filename, "w") do io
@@ -90,9 +92,9 @@ an open position are not showing up in the results. Use `orderhandling!`
 output if performance metrics over the whole price history are needed
 (as typically done when analyzing PnL and drawdown).
 """
-function tradeperf(blotter::Dict{DateTime,(Int64,Float64)},
+function tradeperf(blotter::Blotter,
                    metrics::Vector{Symbol} = [:DDown])
-  perfm = (Symbol=>Vector{Float64})[]
+  perfm = Dict{Symbol,Vector{Float64}}()
   ### TODO (later): accociative collections syntax changes in Julia 0.4
 
   # timestamps in order
@@ -134,7 +136,7 @@ function tradeperf(blotter::Dict{DateTime,(Int64,Float64)},
 end
 
 "Cumulative position, profit/loss, last fill price for blotter."
-function apnlcum(blotter::Dict{DateTime,(Int64,Float64)})
+function apnlcum(blotter::Blotter)
   # timestamps in order
   vt = vtblotter(blotter)
   nt = length(vt)
@@ -169,10 +171,10 @@ Returns: final profit/loss `Float64` scalar.
 :tradepnlfinal
 
 "Based on blotter only, ending at the last transaction timestamp."
-tradepnlfinal(blotter::Dict{DateTime,(Int64,Float64)}) = apnlcum(blotter)[2]
+tradepnlfinal(blotter::Blotter) = apnlcum(blotter)[2]
 
 "Adding current price as the last timestamp."
-function tradepnlfinal(blotter::Dict{DateTime,(Int64,Float64)}, pnow::Float64)
+function tradepnlfinal(blotter::Blotter, pnow::Float64)
   # up to pcur
   acsumb, pnlb, pblast = apnlcum(blotter)
 
@@ -181,7 +183,7 @@ function tradepnlfinal(blotter::Dict{DateTime,(Int64,Float64)}, pnow::Float64)
 end
 
 "Performance metrics helper function for use in foldl."
-function tradeperffold(perfprev::(Float64,Float64), statusnow::(Bool, Float64))
+function tradeperffold(perfprev::@compat(Tuple{Float64,Float64}), statusnow::@compat(Tuple{Bool, Float64}))
   # current max. PnL
   pnlprev = perfprev[1]
   pnlnow = statusnow[2]
@@ -208,7 +210,7 @@ Output tuple-signal components:
 NOTE: Use this function only if needed, otherwise save resources; it is
 not required for running the trading session.
 """
-tradeperfcurr(s_status::Signal{(Bool, Float64)}) = foldl(tradeperffold, (0.0, 0.0), s_status)
+tradeperfcurr(s_status::Signal{@compat(Tuple{Bool, Float64})}) = foldl(tradeperffold, (0.0, 0.0), s_status)
 
 """
 Selected metrics for completed trades out of transactions blotter.
@@ -221,7 +223,7 @@ Return tuple contains:
 - `Int64` number of loosing trades;
 - `Float64` average loosing trade loss.
 """
-function vtradespnl(blotter::Dict{DateTime,(Int64,Float64)})
+function vtradespnl(blotter::Blotter)
   # timestamps in order
   vt = vtblotter(blotter)
   nt = length(vt)
@@ -300,7 +302,7 @@ function perf_pror_auxil(ppos::Float64, pneg::Float64)
 end
 
 "From blotter using completed trades."
-function perf_prom(blotter::Dict{DateTime,(Int64,Float64)};
+function perf_prom(blotter::Blotter;
                    pror::Bool = false,
                    marg::Float64 = 1.0,
                    nbest_remove::Int64 = 0)

@@ -4,7 +4,7 @@ else
     using Base.Dates
 end
 
-using Reactive, Match, TimeSeries
+using Reactive, Match, TimeSeries, Compat
 
 module TradingLogic
 
@@ -14,7 +14,7 @@ else
     using Base.Dates
 end
 
-using Reactive, Match, TimeSeries
+using Reactive, Match, TimeSeries, Compat
 
 export runtrading!, runbacktest
 export emptyblotter, printblotter, writeblotter
@@ -59,9 +59,9 @@ the beginning of the trading session).
 
 See `orderhandling!` for the PnL details.
 """
-function runtrading!(blotter::Dict{DateTime,(Int64,Float64)},
+function runtrading!(blotter::Blotter,
                      backtest::Bool,
-                     s_ohlc::Input{(DateTime,Vector{Float64})},
+                     s_ohlc::Input{OHLC},
                      ohlc_inds::Dict{Symbol,Int64},
                      s_pnow::Signal{Float64},
                      position_initial::Int64,
@@ -86,7 +86,7 @@ function runtrading!(blotter::Dict{DateTime,(Int64,Float64)},
                                         position_actual_mut,
                                         order_current,
                                         blotter, backtest),
-    s_target, s_pnow, s_tnow, typ=(Bool,Float64))
+    s_target, s_pnow, s_tnow, typ=@compat(Tuple{Bool,Float64}))
   # error notification
   lift(s -> tradesyserror(s[1]), s_overallstatus, typ=Bool)
 

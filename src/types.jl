@@ -46,11 +46,17 @@ function getorderposchg(orde::Order)
   error("Unknown order side")
 end
 
+typealias Blotter @compat Dict{DateTime,Tuple{Int64,Float64}}
+
+typealias Targ @compat Tuple{Int64,Vector{Float64}}
+
+typealias OHLC @compat Tuple{DateTime,Vector{Float64}}
+
 """
 Initialize empty blotter as an associative collection
 `DateTime => (Qty::Int64, FillPrice::Float64)`
 """
-emptyblotter() = (DateTime=>(Int64,Float64))[]
+emptyblotter() = Blotter()
 ### TODO (later): accociative collections syntax changes in Julia 0.4
 
 

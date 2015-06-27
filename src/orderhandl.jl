@@ -18,7 +18,7 @@ if stop-price of stoplimit order is reached.
 Overwrites `orde` and returns `Bool` request status.
 """
 function targ2order!(orde::Order,
-                     targ::(Int64, Vector{Float64}),
+                     targ::Targ,
                      trig::ASCIIString,
                      position_actual::Int64,
                      backtest::Bool)
@@ -84,11 +84,11 @@ Returns tuple with:
 NOTE: As opposed to `tradeperf` function, here total PnL is updated
 at each price change time-point.
 """
-function orderhandling!(targ::(Int64, Vector{Float64}),
+function orderhandling!(targ::Targ,
                         pnow::Float64, tnow::DateTime,
                         position_actual_mut::Vector{Int64},
                         ordcurr::Order,
-                        blotter::Dict{DateTime,(Int64,Float64)},
+                        blotter::Blotter,
                         backtest::Bool
                         )
   posact = position_actual_mut[1]
