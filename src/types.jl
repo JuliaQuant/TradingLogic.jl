@@ -57,7 +57,6 @@ Initialize empty blotter as an associative collection
 `DateTime => (Qty::Int64, FillPrice::Float64)`
 """
 emptyblotter() = Blotter()
-### TODO (later): accociative collections syntax changes in Julia 0.4
 
 
 
