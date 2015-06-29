@@ -1,13 +1,15 @@
+rel(path::String) = joinpath(splitdir(@__FILE__)[1], path)
+
 facts("OHLC backtest with timearray input") do
   # using quantstrat goldencross test
   #  details in teststrategy_goldencross.jl
   ohlc_BA = TimeSeries.readtimearray(
-    "test/quantstrat/goldencross/data/OHLC_BA_2.csv")
+    rel("quantstrat/goldencross/data/OHLC_BA_2.csv"))
   targetfun = TradingLogic.goldencrosstarget
   mafast = 50; maslow = 200; targetqty = 100
   date_final = Date(2012,8,31)
   ohlc_ta = ohlc_BA[Date(1961,12,31):date_final]
-  ohlc_inds = (Symbol => Int64)[]
+  ohlc_inds = @compat Dict{Symbol,Int64}()
   ohlc_inds[:open] = 1; ohlc_inds[:close] = 4
 
   # quantstrat/goldencross/results_summary.txt
@@ -27,7 +29,7 @@ facts("OHLC backtest with timearray input") do
 
     # quantstrat output: transactions
     txnsdf = DataFrames.readtable(
-      "test/quantstrat/goldencross/transactions.csv",
+      rel("quantstrat/goldencross/transactions.csv"),
       header = true,
       names = [:datestr, :qty, :prc, :fees, :val, :avgcost, :pl],
       eltypes = [UTF8String, Int64, Float64, Float64,
@@ -55,7 +57,7 @@ facts("OHLC backtest with timearray input") do
   end
 
   context("Output file content") do
-    fileout = "backtest_out.csv"
+    fileout = rel("backtest_out.csv")
     dtformat_out = "yyyy-mm-ddTHH:MM:SS"
 
     pnlfin, ddownmax, blotter = TradingLogic.runbacktest(

@@ -1,3 +1,6 @@
+using TradingLogic
+using Reactive
+
 facts("Working with signals") do
   context("Change detection") do
     s_inp = Reactive.Input(5)
