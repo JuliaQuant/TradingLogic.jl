@@ -119,7 +119,8 @@ Returns tuple with:
 
 * `Float64` final cumulative profit/loss;
 * `Float64` maximum return-based drawdown;
-* transaction blotter as an associative collection.
+* transaction blotter as an associative collection;
+* `Vector{Float64}` equity curve (values for each timestep of `ohlc_ta`).
 
 Make sure to suppress output file when using within
 optimization objective function to improve performance.
@@ -142,6 +143,7 @@ function runbacktest{M}(ohlc_ta::TimeSeries.TimeArray{Float64,2,M},
   s_perf = tradeperfcurr(s_status)
 
   # run the backtest
+  vequity = zeros(nt)
   if fileout == nothing
     writeout = false
   else
@@ -158,6 +160,8 @@ function runbacktest{M}(ohlc_ta::TimeSeries.TimeArray{Float64,2,M},
       push!(s_ohlc, (Dates.DateTime(ohlc_ta.timestamp[i]),
                      vec(ohlc_ta.values[i,:])))
     end
+    pnlcum = s_status.value[2]
+    vequity[i] = pnlcum
     if writeout
       # print current step info: timestamp
       print(fout, quotemark)
@@ -167,7 +171,6 @@ function runbacktest{M}(ohlc_ta::TimeSeries.TimeArray{Float64,2,M},
       print(fout, join(s_ohlc.value[2], separator))
       print(fout, separator)
       # trading performance
-      pnlcum = s_status.value[2]
       ddownnow = pnlcum - s_perf.value[1]
       print(fout, pnlcum) #CumPnL
       print(fout, separator)
@@ -186,8 +189,8 @@ function runbacktest{M}(ohlc_ta::TimeSeries.TimeArray{Float64,2,M},
   ddownfin = pnlfin - pnlmax
   ddownmax = s_perf.value[2] > ddownfin ? s_perf.value[2] : ddownfin
 
-  # FinalPnL, MaxDDown, blotter
-  return pnlfin, ddownmax, blotter
+  # FinalPnL, MaxDDown, blotter, equity curve
+  return pnlfin, ddownmax, blotter, vequity
 end
 
 end # module
