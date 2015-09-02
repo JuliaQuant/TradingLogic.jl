@@ -32,8 +32,11 @@ include("performance.jl")
 include("strategies/goldencross.jl")
 include("strategies/luxor.jl")
 
+"Event-driven backtesting / live trading."
+:runtrading!
+
 """
-Event-driven backtesting / live trading.
+Backtesting or real-time order submission with status output.
 
 Input:
 
@@ -94,8 +97,52 @@ function runtrading!(blotter::Blotter,
 end
 
 """
+Backtesting as far as order submission, final position and targets
+are included in the output.
+
+Input: `backtest = true` enforced. Error notification function is
+not called (check the status-output signal tuple).
+
+Return tuple components:
+
+* `s_overallstatus` tuple-signal;
+* current position single-element mutable array with `Int64` value;
+* current target signal per targeting function output.
+
+This method is useful for feeding current step's targets
+to some external code.
+"""
+function runtrading!(blotter::Blotter,
+                     s_ohlc::Input{OHLC},
+                     ohlc_inds::Dict{Symbol,Int64},
+                     s_pnow::Signal{Float64},
+                     position_initial::Int64,
+                     targetfun::Function, strategy_args...)
+  backtest = true
+  position_actual_mut = [position_initial]
+
+  # target signal: strategy-specific
+  s_target = apply(targetfun, tuple(s_ohlc, ohlc_inds,
+                                    position_actual_mut, strategy_args...))
+
+  # current time signal from OHLC timestamp
+  s_tnow = Reactive.lift(s -> s[1], s_ohlc, typ=DateTime)
+
+  # general order handling part
+  order_current = emptyorder()
+  s_overallstatus = lift(
+    (tgt, pnow, tnow) -> orderhandling!(tgt, pnow, tnow,
+                                        position_actual_mut,
+                                        order_current,
+                                        blotter, backtest),
+    s_target, s_pnow, s_tnow, typ=@compat(Tuple{Bool,Float64}))
+
+  return s_overallstatus, position_actual_mut, s_target
+end
+
+"""
 Backtesting run with OHLC timearray input.
-Optionally writes output file with perfirmance metrics at each timestep.
+Selected performance metrics and equity curve in the output.
 
 Input:
 
@@ -191,6 +238,51 @@ function runbacktest{M}(ohlc_ta::TimeSeries.TimeArray{Float64,2,M},
 
   # FinalPnL, MaxDDown, blotter, equity curve
   return pnlfin, ddownmax, blotter, vequity
+end
+
+"""
+Similar to `runbacktest` but instead of performance metrics,
+current position and targets from the latest step are included
+in the output.
+
+Input: same as `runbacktest`.
+
+Return tuple components:
+
+* transaction blotter as an associative collection;
+* `Int64` position as of the latest timestep;
+* `Targ` targeting tuple as of the latest timestep.
+
+This function is useful to run through a recent historical period and
+determine the latest timestep actions.
+"""
+function runbacktesttarg{M}(ohlc_ta::TimeSeries.TimeArray{Float64,2,M},
+                            ohlc_inds::Dict{Symbol,Int64},
+                            fileout::Union(Nothing,String),
+                            dtformat_out,
+                            pfill::Symbol,
+                            position_initial::Int64,
+                            targetfun::Function, strategy_args...)
+  # initialize signals
+  s_ohlc = Input((Dates.DateTime(ohlc_ta.timestamp[1]),
+                  vec(ohlc_ta.values[1,:])))
+  nt = length(ohlc_ta)
+  s_pnow = lift(s -> s[2][ohlc_inds[pfill]], s_ohlc, typ=Float64)
+  blotter = emptyblotter()
+
+  # using method with targeting info output
+  s_status, pos_act_mut, s_targ = runtrading!(
+    blotter, s_ohlc, ohlc_inds, s_pnow, position_initial,
+    targetfun, strategy_args...)
+
+  # first timestep already initialized all the signals
+  for i = 2:nt
+    push!(s_ohlc, (Dates.DateTime(ohlc_ta.timestamp[i]),
+                   vec(ohlc_ta.values[i,:])))
+  end
+
+  # blotter, latest position, latest targets
+  return blotter, pos_act_mut[1], s_targ.value
 end
 
 end # module

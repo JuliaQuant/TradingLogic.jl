@@ -6,11 +6,11 @@ facts("Working with signals") do
     s_inp = Reactive.Input(5)
     s_chg = TradingLogic.schange(s_inp)
     push!(s_inp, 5)
-    @fact s_chg.value => false
+    @fact s_chg.value --> false
     push!(s_inp, 8)
-    @fact s_chg.value => true
+    @fact s_chg.value --> true
     push!(s_inp, 8)
-    @fact s_chg.value => false
+    @fact s_chg.value --> false
   end
   context("Buffering signal history and SMA calculation") do
     # simple vector test case
@@ -30,7 +30,7 @@ facts("Working with signals") do
       push!(s_inp, vval[i])
       vsma_sig[i] = s_sma.value
     end
-    @fact all(isnan(vsma_sig[1:9])) => true
-    @fact vsma_sig[10:100] => roughly(vsma[10:100])
+    @fact all(isnan(vsma_sig[1:9])) --> true
+    @fact vsma_sig[10:100] --> roughly(vsma[10:100])
   end
 end

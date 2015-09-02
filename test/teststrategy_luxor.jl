@@ -1,12 +1,12 @@
 facts("Luxor trading logic") do
   context("Market state") do
     fm = TradingLogic.luxormktstate
-    @fact fm(120.0, 50.0) => :trendup
-    @fact fm(20.0, 50.0) => :trenddown
-    @fact fm(20.0, 20.0) => :undefined
-    @fact fm(NaN, 20.0) => :undefined
-    @fact fm(20.0, NaN) => :undefined
-    @fact fm(NaN, NaN) => :undefined
+    @fact fm(120.0, 50.0) --> :trendup
+    @fact fm(20.0, 50.0) --> :trenddown
+    @fact fm(20.0, 20.0) --> :undefined
+    @fact fm(NaN, 20.0) --> :undefined
+    @fact fm(20.0, NaN) --> :undefined
+    @fact fm(NaN, NaN) --> :undefined
   end
   context("Target position") do
     tq = 100
@@ -15,35 +15,35 @@ facts("Luxor trading logic") do
     stlim = Array(Float64, 0)
 
     # enter long
-    @fact ft(:trendup, 0) => (tq, [165.0, 155.0])
+    @fact ft(:trendup, 0) --> (tq, [165.0, 155.0])
     # enter long partial fill
     p = int(tq/2)
-    @fact ft(:trendup, p) => (tq - p, [165.0, 155.0])
+    @fact ft(:trendup, p) --> (tq - p, [165.0, 155.0])
 
     # enter short
-    @fact ft(:trenddown, 0) => (-tq, [140.0, 150.0])
+    @fact ft(:trenddown, 0) --> (-tq, [140.0, 150.0])
     # enter short partial fill
     p = -int(tq/2)
-    @fact ft(:trenddown, p) => (-abs(tq-p), [140.0, 150.0])
+    @fact ft(:trenddown, p) --> (-abs(tq-p), [140.0, 150.0])
 
     # hold position in line with the market state
-    @fact ft(:trendup, tq) => (0, stlim)
-    @fact ft(:trenddown, -tq) => (0, stlim)
+    @fact ft(:trendup, tq) --> (0, stlim)
+    @fact ft(:trenddown, -tq) --> (0, stlim)
 
     # exit long position
-    @fact ft(:trenddown, tq) => (-tq, stlim)
+    @fact ft(:trenddown, tq) --> (-tq, stlim)
     p = int(tq/2)
-    @fact ft(:trenddown, p) => (-p, stlim)
+    @fact ft(:trenddown, p) --> (-p, stlim)
 
     # exit short position
-    @fact ft(:trendup, -tq) => (tq, stlim)
+    @fact ft(:trendup, -tq) --> (tq, stlim)
     p = -int(tq/2)
-    @fact ft(:trendup, p) => (abs(p), stlim)
+    @fact ft(:trendup, p) --> (abs(p), stlim)
 
     # undefined: wait
-    @fact ft(:undefined, 0) => (0, stlim)
-    @fact ft(:undefined, -tq) => (0, stlim)
-    @fact ft(:undefined, tq) => (0, stlim)
+    @fact ft(:undefined, 0) --> (0, stlim)
+    @fact ft(:undefined, -tq) --> (0, stlim)
+    @fact ft(:undefined, tq) --> (0, stlim)
   end
 end
 
@@ -88,6 +88,6 @@ facts("Luxor strategy backtesting") do
     println(perfm)
 
     ### TODO
-    @pending 0 => 1
+    @pending 0 --> 1
   end
 end

@@ -24,8 +24,9 @@ facts("OHLC backtest with timearray input") do
     pnlfin, ddownmax, blotter = TradingLogic.runbacktest(
       ohlc_ta, ohlc_inds, nothing, "", pfill, position_initial,
       targetfun, targetqty, mafast, maslow)
-    @fact pnlfin => roughly(pnlnet_ref)
-    @fact ddownmax => roughly(ddownmax_ref)
+    #TradingLogic.printblotter(STDOUT, blotter)
+    @fact pnlfin --> roughly(pnlnet_ref)
+    @fact ddownmax --> roughly(ddownmax_ref)
 
     # quantstrat output: transactions
     txnsdf = DataFrames.readtable(
@@ -50,10 +51,10 @@ facts("OHLC backtest with timearray input") do
 
     # verify blotter: transaction matching
     vt, perfm = TradingLogic.tradeperf(blotter, [:DDown])
-    @fact length(perfm[:Qty]) => length(txnsdf[:datestr])
-    @fact Date(vt) => vdate
-    @fact perfm[:Qty] => vqty
-    @fact perfm[:FillPrice] => roughly(vprc)
+    @fact length(perfm[:Qty]) --> length(txnsdf[:datestr])
+    @fact Date(vt) --> vdate
+    @fact perfm[:Qty] --> vqty
+    @fact perfm[:FillPrice] --> roughly(vprc)
   end
 
   context("Output file content") do
@@ -64,19 +65,52 @@ facts("OHLC backtest with timearray input") do
       ohlc_ta, ohlc_inds, fileout, dtformat_out,
       pfill, position_initial,
       targetfun, targetqty, mafast, maslow)
-    @fact pnlfin => roughly(pnlnet_ref)
-    @fact ddownmax => roughly(ddownmax_ref)
+    @fact pnlfin --> roughly(pnlnet_ref)
+    @fact ddownmax --> roughly(ddownmax_ref)
 
     # output file as timearray
     taf = TimeSeries.readtimearray(fileout,
                                    format=dtformat_out)
     run(`rm $fileout`)
-    @fact length(taf) => length(ohlc_ta)
-    @fact taf.timestamp => ohlc_ta.timestamp
-    @fact taf.colnames => [ohlc_ta.colnames, "CumPnL", "DDown"]
-    @fact taf.values[:,1:end-2] => roughly(ohlc_ta.values)
-    @fact taf["CumPnL"].values[1] => roughly(0.0)
-    @fact taf["DDown"].values[1] => roughly(0.0)
-    @fact maximum(abs(taf["DDown"].values)) => roughly(ddownmax_ref)
+    @fact length(taf) --> length(ohlc_ta)
+    @fact taf.timestamp --> ohlc_ta.timestamp
+    @fact taf.colnames --> [ohlc_ta.colnames, "CumPnL", "DDown"]
+    @fact taf.values[:,1:end-2] --> roughly(ohlc_ta.values)
+    @fact taf["CumPnL"].values[1] --> roughly(0.0)
+    @fact taf["DDown"].values[1] --> roughly(0.0)
+    @fact maximum(abs(taf["DDown"].values)) --> roughly(ddownmax_ref)
+  end
+
+  context("Latest timestep position and targets") do
+    # final step: non-zero position, no changes targeted
+    itfin = findfirst(ohlc_ta.timestamp .== Dates.Date(1967,02,23))
+    blotter, posact, targ = TradingLogic.runbacktesttarg(
+      ohlc_ta[1:itfin], ohlc_inds, nothing, "", pfill, position_initial,
+      targetfun, targetqty, mafast, maslow)
+    #TradingLogic.printblotter(STDOUT, blotter)
+    @fact length(blotter) --> 3
+    @fact posact --> 100
+    @fact targ[1] --> 0
+
+    # final step: non-zero position, exit targeted
+    # if continued, exit transaction fills on 1967-10-27
+    itfin = findfirst(ohlc_ta.timestamp .== Dates.Date(1967,10,26))
+    blotter, posact, targ = TradingLogic.runbacktesttarg(
+      ohlc_ta[1:itfin], ohlc_inds, nothing, "", pfill, position_initial,
+      targetfun, targetqty, mafast, maslow)
+    #TradingLogic.printblotter(STDOUT, blotter)
+    @fact length(blotter) --> 3
+    @fact posact --> 100
+    @fact targ[1] --> -100
+
+    # final step: zero position, no changes targeted
+    itfin = findfirst(ohlc_ta.timestamp .== Dates.Date(1967,10,30))
+    blotter, posact, targ = TradingLogic.runbacktesttarg(
+      ohlc_ta[1:itfin], ohlc_inds, nothing, "", pfill, position_initial,
+      targetfun, targetqty, mafast, maslow)
+    #TradingLogic.printblotter(STDOUT, blotter)
+    @fact length(blotter) --> 4
+    @fact posact --> 0
+    @fact targ[1] --> 0
   end
 end
