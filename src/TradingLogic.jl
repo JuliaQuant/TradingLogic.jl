@@ -16,7 +16,7 @@ end
 
 using Reactive, Match, TimeSeries, Compat
 
-export runtrading!, runbacktest
+export runtrading!, runbacktest, runbacktesttarg
 export emptyblotter, printblotter, writeblotter
 export tradeperfcurr, tradeperf, tradepnlfinal, vtradespnl, perf_prom
 
@@ -97,8 +97,7 @@ function runtrading!(blotter::Blotter,
 end
 
 """
-Backtesting as far as order submission, final position and targets
-are included in the output.
+Backtesting process with final position and targets included in the output.
 
 Input: `backtest = true` enforced. Error notification function is
 not called (check the status-output signal tuple).
@@ -182,52 +181,15 @@ function runbacktest{M}(ohlc_ta::TimeSeries.TimeArray{Float64,2,M},
   # initialize signals
   s_ohlc = Input((Dates.DateTime(ohlc_ta.timestamp[1]),
                   vec(ohlc_ta.values[1,:])))
-  nt = length(ohlc_ta)
   s_pnow = lift(s -> s[2][ohlc_inds[pfill]], s_ohlc, typ=Float64)
   blotter = emptyblotter()
   s_status = runtrading!(blotter, true, s_ohlc, ohlc_inds, s_pnow,
                          position_initial, targetfun, strategy_args...)
   s_perf = tradeperfcurr(s_status)
 
-  # run the backtest
-  vequity = zeros(nt)
-  if fileout == nothing
-    writeout = false
-  else
-    # prepare file to write to at each timestep
-    fout = open(fileout, "w")
-    separator = ','; quotemark = '"'
-    rescols = ["Timestamp", ohlc_ta.colnames, "CumPnL", "DDown"]
-    printvecstring(fout, rescols, separator, quotemark)
-    writeout = true
-  end
-  for i = 1:nt
-    if i > 1
-      # first timestep already initialized all the signals
-      push!(s_ohlc, (Dates.DateTime(ohlc_ta.timestamp[i]),
-                     vec(ohlc_ta.values[i,:])))
-    end
-    pnlcum = s_status.value[2]
-    vequity[i] = pnlcum
-    if writeout
-      # print current step info: timestamp
-      print(fout, quotemark)
-      print(fout, Dates.format(s_ohlc.value[1], dtformat_out))
-      print(fout, quotemark); print(fout, separator)
-      # OHLC timearray columns
-      print(fout, join(s_ohlc.value[2], separator))
-      print(fout, separator)
-      # trading performance
-      ddownnow = pnlcum - s_perf.value[1]
-      print(fout, pnlcum) #CumPnL
-      print(fout, separator)
-      print(fout, ddownnow) #DDown
-      print(fout, '\n')
-    end
-  end
-  if writeout
-    close(fout)
-  end
+  # core of the backtest run
+  vequity = runbacktestcore(ohlc_ta, s_ohlc, s_status, s_perf,
+                            fileout, dtformat_out)
 
   # finalize perf. metrics at the last step close-price
   pfinal = s_ohlc.value[2][ohlc_inds[:close]]
@@ -274,15 +236,65 @@ function runbacktesttarg{M}(ohlc_ta::TimeSeries.TimeArray{Float64,2,M},
   s_status, pos_act_mut, s_targ = runtrading!(
     blotter, s_ohlc, ohlc_inds, s_pnow, position_initial,
     targetfun, strategy_args...)
+  s_perf = tradeperfcurr(s_status)
 
-  # first timestep already initialized all the signals
-  for i = 2:nt
-    push!(s_ohlc, (Dates.DateTime(ohlc_ta.timestamp[i]),
-                   vec(ohlc_ta.values[i,:])))
-  end
+  # core of the backtest run
+  vequity = runbacktestcore(ohlc_ta, s_ohlc, s_status, s_perf,
+                            fileout, dtformat_out)
 
   # blotter, latest position, latest targets
   return blotter, pos_act_mut[1], s_targ.value
+end
+
+"Core of the backtest run."
+function runbacktestcore{M}(ohlc_ta::TimeSeries.TimeArray{Float64,2,M},
+                            s_ohlc::Input{OHLC},
+                            s_status::Signal{@compat(Tuple{Bool, Float64})},
+                            s_perf::Signal{@compat(Tuple{Float64, Float64})},
+                            fileout::Union(Nothing,String),
+                            dtformat_out)
+  nt = length(ohlc_ta)
+  vequity = zeros(nt)
+
+  if fileout == nothing
+    writeout = false
+  else
+    # prepare file to write to at each timestep
+    fout = open(fileout, "w")
+    separator = ','; quotemark = '"'
+    rescols = ["Timestamp", ohlc_ta.colnames, "CumPnL", "DDown"]
+    printvecstring(fout, rescols, separator, quotemark)
+    writeout = true
+  end
+  for i = 1:nt
+    if i > 1
+      # first timestep already initialized all the signals
+      push!(s_ohlc, (Dates.DateTime(ohlc_ta.timestamp[i]),
+                     vec(ohlc_ta.values[i,:])))
+    end
+    pnlcum = s_status.value[2]
+    vequity[i] = pnlcum
+    if writeout
+      # print current step info: timestamp
+      print(fout, quotemark)
+      print(fout, Dates.format(s_ohlc.value[1], dtformat_out))
+      print(fout, quotemark); print(fout, separator)
+      # OHLC timearray columns
+      print(fout, join(s_ohlc.value[2], separator))
+      print(fout, separator)
+      # trading performance
+      ddownnow = pnlcum - s_perf.value[1]
+      print(fout, pnlcum) #CumPnL
+      print(fout, separator)
+      print(fout, ddownnow) #DDown
+      print(fout, '\n')
+    end
+  end
+  if writeout
+    close(fout)
+  end
+
+  return vequity
 end
 
 end # module
