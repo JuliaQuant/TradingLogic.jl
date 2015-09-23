@@ -20,7 +20,7 @@ dropped (to increase PROM strictness).
 number of trades.
 
 *source:*
-`TradingLogic/src/performance.jl:292 <https://github.com/JuliaQuant/TradingLogic.jl/tree/203106a9d1cfd3678a079d8d702a7a452f00eea0/src/performance.jl#L292>`__
+`TradingLogic/src/performance.jl:292 <https://github.com/JuliaQuant/TradingLogic.jl/tree/1c1aebc35e43dfbd6e71d9d99d2afe8ab4fcd80b/src/performance.jl#L292>`__
 
 --------------
 
@@ -28,7 +28,7 @@ number of trades.
 backtesting / live trading.
 
 *source:*
-`TradingLogic/src/TradingLogic.jl:36 <https://github.com/JuliaQuant/TradingLogic.jl/tree/203106a9d1cfd3678a079d8d702a7a452f00eea0/src/TradingLogic.jl#L36>`__
+`TradingLogic/src/TradingLogic.jl:36 <https://github.com/JuliaQuant/TradingLogic.jl/tree/1c1aebc35e43dfbd6e71d9d99d2afe8ab4fcd80b/src/TradingLogic.jl#L36>`__
 
 --------------
 
@@ -42,7 +42,7 @@ parameter optimization workflow.
 Returns: final profit/loss ``Float64`` scalar.
 
 *source:*
-`TradingLogic/src/performance.jl:171 <https://github.com/JuliaQuant/TradingLogic.jl/tree/203106a9d1cfd3678a079d8d702a7a452f00eea0/src/performance.jl#L171>`__
+`TradingLogic/src/performance.jl:171 <https://github.com/JuliaQuant/TradingLogic.jl/tree/1c1aebc35e43dfbd6e71d9d99d2afe8ab4fcd80b/src/performance.jl#L171>`__
 
 --------------
 
@@ -52,7 +52,7 @@ Initialize empty blotter as an associative collection
 ``DateTime => (Qty::Int64, FillPrice::Float64)``
 
 *source:*
-`TradingLogic/src/types.jl:59 <https://github.com/JuliaQuant/TradingLogic.jl/tree/203106a9d1cfd3678a079d8d702a7a452f00eea0/src/types.jl#L59>`__
+`TradingLogic/src/types.jl:59 <https://github.com/JuliaQuant/TradingLogic.jl/tree/1c1aebc35e43dfbd6e71d9d99d2afe8ab4fcd80b/src/types.jl#L59>`__
 
 --------------
 
@@ -60,7 +60,7 @@ Initialize empty blotter as an associative collection
 `¶ <#method__perf_prom.1>`__ From blotter using completed trades.
 
 *source:*
-`TradingLogic/src/performance.jl:305 <https://github.com/JuliaQuant/TradingLogic.jl/tree/203106a9d1cfd3678a079d8d702a7a452f00eea0/src/performance.jl#L305>`__
+`TradingLogic/src/performance.jl:305 <https://github.com/JuliaQuant/TradingLogic.jl/tree/1c1aebc35e43dfbd6e71d9d99d2afe8ab4fcd80b/src/performance.jl#L305>`__
 
 --------------
 
@@ -68,7 +68,7 @@ Initialize empty blotter as an associative collection
 From profit/loss vector of completed trades.
 
 *source:*
-`TradingLogic/src/performance.jl:325 <https://github.com/JuliaQuant/TradingLogic.jl/tree/203106a9d1cfd3678a079d8d702a7a452f00eea0/src/performance.jl#L325>`__
+`TradingLogic/src/performance.jl:325 <https://github.com/JuliaQuant/TradingLogic.jl/tree/1c1aebc35e43dfbd6e71d9d99d2afe8ab4fcd80b/src/performance.jl#L325>`__
 
 --------------
 
@@ -77,7 +77,7 @@ From profit/loss vector of completed trades.
 DataFrames.printtable.
 
 *source:*
-`TradingLogic/src/performance.jl:42 <https://github.com/JuliaQuant/TradingLogic.jl/tree/203106a9d1cfd3678a079d8d702a7a452f00eea0/src/performance.jl#L42>`__
+`TradingLogic/src/performance.jl:42 <https://github.com/JuliaQuant/TradingLogic.jl/tree/1c1aebc35e43dfbd6e71d9d99d2afe8ab4fcd80b/src/performance.jl#L42>`__
 
 --------------
 
@@ -102,7 +102,7 @@ This function is useful to run through a recent historical period and
 determine the latest timestep actions.
 
 *source:*
-`TradingLogic/src/TradingLogic.jl:221 <https://github.com/JuliaQuant/TradingLogic.jl/tree/203106a9d1cfd3678a079d8d702a7a452f00eea0/src/TradingLogic.jl#L221>`__
+`TradingLogic/src/TradingLogic.jl:221 <https://github.com/JuliaQuant/TradingLogic.jl/tree/1c1aebc35e43dfbd6e71d9d99d2afe8ab4fcd80b/src/TradingLogic.jl#L221>`__
 
 --------------
 
@@ -146,7 +146,7 @@ Make sure to suppress output file when using within optimization
 objective function to improve performance.
 
 *source:*
-`TradingLogic/src/TradingLogic.jl:174 <https://github.com/JuliaQuant/TradingLogic.jl/tree/203106a9d1cfd3678a079d8d702a7a452f00eea0/src/TradingLogic.jl#L174>`__
+`TradingLogic/src/TradingLogic.jl:174 <https://github.com/JuliaQuant/TradingLogic.jl/tree/1c1aebc35e43dfbd6e71d9d99d2afe8ab4fcd80b/src/TradingLogic.jl#L174>`__
 
 --------------
 
@@ -185,7 +185,7 @@ Returns tuple-signal with:
 See ``orderhandling!`` for the PnL details.
 
 *source:*
-`TradingLogic/src/TradingLogic.jl:65 <https://github.com/JuliaQuant/TradingLogic.jl/tree/203106a9d1cfd3678a079d8d702a7a452f00eea0/src/TradingLogic.jl#L65>`__
+`TradingLogic/src/TradingLogic.jl:65 <https://github.com/JuliaQuant/TradingLogic.jl/tree/1c1aebc35e43dfbd6e71d9d99d2afe8ab4fcd80b/src/TradingLogic.jl#L65>`__
 
 --------------
 
@@ -210,7 +210,7 @@ This method is useful for feeding current step's targets to some
 external code.
 
 *source:*
-`TradingLogic/src/TradingLogic.jl:114 <https://github.com/JuliaQuant/TradingLogic.jl/tree/203106a9d1cfd3678a079d8d702a7a452f00eea0/src/TradingLogic.jl#L114>`__
+`TradingLogic/src/TradingLogic.jl:114 <https://github.com/JuliaQuant/TradingLogic.jl/tree/1c1aebc35e43dfbd6e71d9d99d2afe8ab4fcd80b/src/TradingLogic.jl#L114>`__
 
 --------------
 
@@ -232,7 +232,7 @@ whole price history are needed (as typically done when analyzing PnL and
 drawdown).
 
 *source:*
-`TradingLogic/src/performance.jl:95 <https://github.com/JuliaQuant/TradingLogic.jl/tree/203106a9d1cfd3678a079d8d702a7a452f00eea0/src/performance.jl#L95>`__
+`TradingLogic/src/performance.jl:95 <https://github.com/JuliaQuant/TradingLogic.jl/tree/1c1aebc35e43dfbd6e71d9d99d2afe8ab4fcd80b/src/performance.jl#L95>`__
 
 --------------
 
@@ -254,7 +254,7 @@ whole price history are needed (as typically done when analyzing PnL and
 drawdown).
 
 *source:*
-`TradingLogic/src/performance.jl:95 <https://github.com/JuliaQuant/TradingLogic.jl/tree/203106a9d1cfd3678a079d8d702a7a452f00eea0/src/performance.jl#L95>`__
+`TradingLogic/src/performance.jl:95 <https://github.com/JuliaQuant/TradingLogic.jl/tree/1c1aebc35e43dfbd6e71d9d99d2afe8ab4fcd80b/src/performance.jl#L95>`__
 
 --------------
 
@@ -272,7 +272,7 @@ NOTE: Use this function only if needed, otherwise save resources; it is
 not required for running the trading session.
 
 *source:*
-`TradingLogic/src/performance.jl:213 <https://github.com/JuliaQuant/TradingLogic.jl/tree/203106a9d1cfd3678a079d8d702a7a452f00eea0/src/performance.jl#L213>`__
+`TradingLogic/src/performance.jl:213 <https://github.com/JuliaQuant/TradingLogic.jl/tree/1c1aebc35e43dfbd6e71d9d99d2afe8ab4fcd80b/src/performance.jl#L213>`__
 
 --------------
 
@@ -281,7 +281,7 @@ not required for running the trading session.
 last transaction timestamp.
 
 *source:*
-`TradingLogic/src/performance.jl:174 <https://github.com/JuliaQuant/TradingLogic.jl/tree/203106a9d1cfd3678a079d8d702a7a452f00eea0/src/performance.jl#L174>`__
+`TradingLogic/src/performance.jl:174 <https://github.com/JuliaQuant/TradingLogic.jl/tree/1c1aebc35e43dfbd6e71d9d99d2afe8ab4fcd80b/src/performance.jl#L174>`__
 
 --------------
 
@@ -290,7 +290,7 @@ pnow::Float64) `¶ <#method__tradepnlfinal.2>`__ Adding current price as
 the last timestamp.
 
 *source:*
-`TradingLogic/src/performance.jl:177 <https://github.com/JuliaQuant/TradingLogic.jl/tree/203106a9d1cfd3678a079d8d702a7a452f00eea0/src/performance.jl#L177>`__
+`TradingLogic/src/performance.jl:177 <https://github.com/JuliaQuant/TradingLogic.jl/tree/1c1aebc35e43dfbd6e71d9d99d2afe8ab4fcd80b/src/performance.jl#L177>`__
 
 --------------
 
@@ -308,7 +308,7 @@ Return tuple contains:
 -  ``Float64`` average loosing trade loss.
 
 *source:*
-`TradingLogic/src/performance.jl:226 <https://github.com/JuliaQuant/TradingLogic.jl/tree/203106a9d1cfd3678a079d8d702a7a452f00eea0/src/performance.jl#L226>`__
+`TradingLogic/src/performance.jl:226 <https://github.com/JuliaQuant/TradingLogic.jl/tree/1c1aebc35e43dfbd6e71d9d99d2afe8ab4fcd80b/src/performance.jl#L226>`__
 
 --------------
 
@@ -317,7 +317,7 @@ Float64)}) `¶ <#method__writeblotter.1>`__ Write blotter transactions to
 file.
 
 *source:*
-`TradingLogic/src/performance.jl:72 <https://github.com/JuliaQuant/TradingLogic.jl/tree/203106a9d1cfd3678a079d8d702a7a452f00eea0/src/performance.jl#L72>`__
+`TradingLogic/src/performance.jl:72 <https://github.com/JuliaQuant/TradingLogic.jl/tree/1c1aebc35e43dfbd6e71d9d99d2afe8ab4fcd80b/src/performance.jl#L72>`__
 
 Internal
 --------
@@ -330,7 +330,7 @@ Get order status by order ID string. Returns ``Symbol`` in line with
 ``Order``-type options for status-slot.
 
 *source:*
-`TradingLogic/src/exchange.jl:26 <https://github.com/JuliaQuant/TradingLogic.jl/tree/203106a9d1cfd3678a079d8d702a7a452f00eea0/src/exchange.jl#L26>`__
+`TradingLogic/src/exchange.jl:26 <https://github.com/JuliaQuant/TradingLogic.jl/tree/1c1aebc35e43dfbd6e71d9d99d2afe8ab4fcd80b/src/exchange.jl#L26>`__
 
 --------------
 
@@ -338,7 +338,7 @@ Get order status by order ID string. Returns ``Symbol`` in line with
 order request. Returns ``Bool`` request result.
 
 *source:*
-`TradingLogic/src/exchange.jl:66 <https://github.com/JuliaQuant/TradingLogic.jl/tree/203106a9d1cfd3678a079d8d702a7a452f00eea0/src/exchange.jl#L66>`__
+`TradingLogic/src/exchange.jl:66 <https://github.com/JuliaQuant/TradingLogic.jl/tree/1c1aebc35e43dfbd6e71d9d99d2afe8ab4fcd80b/src/exchange.jl#L66>`__
 
 --------------
 
@@ -346,7 +346,7 @@ order request. Returns ``Bool`` request result.
 order. Returns order ID string or ``FAIL``-string
 
 *source:*
-`TradingLogic/src/exchange.jl:47 <https://github.com/JuliaQuant/TradingLogic.jl/tree/203106a9d1cfd3678a079d8d702a7a452f00eea0/src/exchange.jl#L47>`__
+`TradingLogic/src/exchange.jl:47 <https://github.com/JuliaQuant/TradingLogic.jl/tree/1c1aebc35e43dfbd6e71d9d99d2afe8ab4fcd80b/src/exchange.jl#L47>`__
 
 --------------
 
@@ -355,7 +355,7 @@ order. Returns order ID string or ``FAIL``-string
 price for blotter.
 
 *source:*
-`TradingLogic/src/performance.jl:139 <https://github.com/JuliaQuant/TradingLogic.jl/tree/203106a9d1cfd3678a079d8d702a7a452f00eea0/src/performance.jl#L139>`__
+`TradingLogic/src/performance.jl:139 <https://github.com/JuliaQuant/TradingLogic.jl/tree/1c1aebc35e43dfbd6e71d9d99d2afe8ab4fcd80b/src/performance.jl#L139>`__
 
 --------------
 
@@ -363,7 +363,7 @@ price for blotter.
 quantity
 
 *source:*
-`TradingLogic/src/types.jl:27 <https://github.com/JuliaQuant/TradingLogic.jl/tree/203106a9d1cfd3678a079d8d702a7a452f00eea0/src/types.jl#L27>`__
+`TradingLogic/src/types.jl:27 <https://github.com/JuliaQuant/TradingLogic.jl/tree/1c1aebc35e43dfbd6e71d9d99d2afe8ab4fcd80b/src/types.jl#L27>`__
 
 --------------
 
@@ -373,7 +373,7 @@ Signal value change function to be used with foldl; use with (Bool,
 signal\_t=0) tuple as initial fold value
 
 *source:*
-`TradingLogic/src/sigutils.jl:9 <https://github.com/JuliaQuant/TradingLogic.jl/tree/203106a9d1cfd3678a079d8d702a7a452f00eea0/src/sigutils.jl#L9>`__
+`TradingLogic/src/sigutils.jl:9 <https://github.com/JuliaQuant/TradingLogic.jl/tree/1c1aebc35e43dfbd6e71d9d99d2afe8ab4fcd80b/src/sigutils.jl#L9>`__
 
 --------------
 
@@ -381,7 +381,7 @@ signal\_t=0) tuple as initial fold value
 Signed position change in the Order object
 
 *source:*
-`TradingLogic/src/types.jl:39 <https://github.com/JuliaQuant/TradingLogic.jl/tree/203106a9d1cfd3678a079d8d702a7a452f00eea0/src/types.jl#L39>`__
+`TradingLogic/src/types.jl:39 <https://github.com/JuliaQuant/TradingLogic.jl/tree/1c1aebc35e43dfbd6e71d9d99d2afe8ab4fcd80b/src/types.jl#L39>`__
 
 --------------
 
@@ -390,7 +390,7 @@ Signed position change in the Order object
 strategy.
 
 *source:*
-`TradingLogic/src/strategies/goldencross.jl:2 <https://github.com/JuliaQuant/TradingLogic.jl/tree/203106a9d1cfd3678a079d8d702a7a452f00eea0/src/strategies/goldencross.jl#L2>`__
+`TradingLogic/src/strategies/goldencross.jl:2 <https://github.com/JuliaQuant/TradingLogic.jl/tree/1c1aebc35e43dfbd6e71d9d99d2afe8ab4fcd80b/src/strategies/goldencross.jl#L2>`__
 
 --------------
 
@@ -403,7 +403,7 @@ only market orders, long-side enter. ... Returns
 ``(poschg::Int64, Vector[limitprice, stopprice]``.
 
 *source:*
-`TradingLogic/src/strategies/goldencross.jl:22 <https://github.com/JuliaQuant/TradingLogic.jl/tree/203106a9d1cfd3678a079d8d702a7a452f00eea0/src/strategies/goldencross.jl#L22>`__
+`TradingLogic/src/strategies/goldencross.jl:22 <https://github.com/JuliaQuant/TradingLogic.jl/tree/1c1aebc35e43dfbd6e71d9d99d2afe8ab4fcd80b/src/strategies/goldencross.jl#L22>`__
 
 --------------
 
@@ -413,7 +413,7 @@ targetqty::Int64) `¶ <#method__goldencrosstarget.1>`__ Target signal for
 goldencross strategy.
 
 *source:*
-`TradingLogic/src/strategies/goldencross.jl:49 <https://github.com/JuliaQuant/TradingLogic.jl/tree/203106a9d1cfd3678a079d8d702a7a452f00eea0/src/strategies/goldencross.jl#L49>`__
+`TradingLogic/src/strategies/goldencross.jl:49 <https://github.com/JuliaQuant/TradingLogic.jl/tree/1c1aebc35e43dfbd6e71d9d99d2afe8ab4fcd80b/src/strategies/goldencross.jl#L49>`__
 
 --------------
 
@@ -424,7 +424,7 @@ targetqty::Int64, nsma\_fast::Int64)
 strategy.
 
 *source:*
-`TradingLogic/src/strategies/goldencross.jl:49 <https://github.com/JuliaQuant/TradingLogic.jl/tree/203106a9d1cfd3678a079d8d702a7a452f00eea0/src/strategies/goldencross.jl#L49>`__
+`TradingLogic/src/strategies/goldencross.jl:49 <https://github.com/JuliaQuant/TradingLogic.jl/tree/1c1aebc35e43dfbd6e71d9d99d2afe8ab4fcd80b/src/strategies/goldencross.jl#L49>`__
 
 --------------
 
@@ -435,7 +435,7 @@ targetqty::Int64, nsma\_fast::Int64, nsma\_slow::Int64)
 strategy.
 
 *source:*
-`TradingLogic/src/strategies/goldencross.jl:49 <https://github.com/JuliaQuant/TradingLogic.jl/tree/203106a9d1cfd3678a079d8d702a7a452f00eea0/src/strategies/goldencross.jl#L49>`__
+`TradingLogic/src/strategies/goldencross.jl:49 <https://github.com/JuliaQuant/TradingLogic.jl/tree/1c1aebc35e43dfbd6e71d9d99d2afe8ab4fcd80b/src/strategies/goldencross.jl#L49>`__
 
 --------------
 
@@ -445,7 +445,7 @@ Initialization of ``nbuff``-size float-elements buffer with NaNs and
 last element ``xinit``.
 
 *source:*
-`TradingLogic/src/sigutils.jl:43 <https://github.com/JuliaQuant/TradingLogic.jl/tree/203106a9d1cfd3678a079d8d702a7a452f00eea0/src/sigutils.jl#L43>`__
+`TradingLogic/src/sigutils.jl:43 <https://github.com/JuliaQuant/TradingLogic.jl/tree/1c1aebc35e43dfbd6e71d9d99d2afe8ab4fcd80b/src/sigutils.jl#L43>`__
 
 --------------
 
@@ -453,7 +453,7 @@ last element ``xinit``.
 status is ``:pending``
 
 *source:*
-`TradingLogic/src/types.jl:30 <https://github.com/JuliaQuant/TradingLogic.jl/tree/203106a9d1cfd3678a079d8d702a7a452f00eea0/src/types.jl#L30>`__
+`TradingLogic/src/types.jl:30 <https://github.com/JuliaQuant/TradingLogic.jl/tree/1c1aebc35e43dfbd6e71d9d99d2afe8ab4fcd80b/src/types.jl#L30>`__
 
 --------------
 
@@ -461,7 +461,7 @@ status is ``:pending``
 `¶ <#method__luxormktstate.1>`__ Market state in luxor strategy
 
 *source:*
-`TradingLogic/src/strategies/luxor.jl:2 <https://github.com/JuliaQuant/TradingLogic.jl/tree/203106a9d1cfd3678a079d8d702a7a452f00eea0/src/strategies/luxor.jl#L2>`__
+`TradingLogic/src/strategies/luxor.jl:2 <https://github.com/JuliaQuant/TradingLogic.jl/tree/1c1aebc35e43dfbd6e71d9d99d2afe8ab4fcd80b/src/strategies/luxor.jl#L2>`__
 
 --------------
 
@@ -473,7 +473,7 @@ Target position and stop, limit prices (if any) for luxor strategy. ...
 Returns ``(poschg::Int64, Vector[limitprice, stopprice]``.
 
 *source:*
-`TradingLogic/src/strategies/luxor.jl:30 <https://github.com/JuliaQuant/TradingLogic.jl/tree/203106a9d1cfd3678a079d8d702a7a452f00eea0/src/strategies/luxor.jl#L30>`__
+`TradingLogic/src/strategies/luxor.jl:30 <https://github.com/JuliaQuant/TradingLogic.jl/tree/1c1aebc35e43dfbd6e71d9d99d2afe8ab4fcd80b/src/strategies/luxor.jl#L30>`__
 
 --------------
 
@@ -484,7 +484,7 @@ targetqty::Int64) `¶ <#method__luxortarget.1>`__ Target signal for luxor
 strategy.
 
 *source:*
-`TradingLogic/src/strategies/luxor.jl:60 <https://github.com/JuliaQuant/TradingLogic.jl/tree/203106a9d1cfd3678a079d8d702a7a452f00eea0/src/strategies/luxor.jl#L60>`__
+`TradingLogic/src/strategies/luxor.jl:60 <https://github.com/JuliaQuant/TradingLogic.jl/tree/1c1aebc35e43dfbd6e71d9d99d2afe8ab4fcd80b/src/strategies/luxor.jl#L60>`__
 
 --------------
 
@@ -492,7 +492,7 @@ strategy.
 Generate oder ID string for a new order
 
 *source:*
-`TradingLogic/src/orderhandl.jl:4 <https://github.com/JuliaQuant/TradingLogic.jl/tree/203106a9d1cfd3678a079d8d702a7a452f00eea0/src/orderhandl.jl#L4>`__
+`TradingLogic/src/orderhandl.jl:4 <https://github.com/JuliaQuant/TradingLogic.jl/tree/1c1aebc35e43dfbd6e71d9d99d2afe8ab4fcd80b/src/orderhandl.jl#L4>`__
 
 --------------
 
@@ -522,7 +522,7 @@ NOTE: As opposed to ``tradeperf`` function, here total PnL is updated at
 each price change time-point.
 
 *source:*
-`TradingLogic/src/orderhandl.jl:87 <https://github.com/JuliaQuant/TradingLogic.jl/tree/203106a9d1cfd3678a079d8d702a7a452f00eea0/src/orderhandl.jl#L87>`__
+`TradingLogic/src/orderhandl.jl:87 <https://github.com/JuliaQuant/TradingLogic.jl/tree/1c1aebc35e43dfbd6e71d9d99d2afe8ab4fcd80b/src/orderhandl.jl#L87>`__
 
 --------------
 
@@ -531,7 +531,7 @@ each price change time-point.
 extreme case handling.
 
 *source:*
-`TradingLogic/src/performance.jl:295 <https://github.com/JuliaQuant/TradingLogic.jl/tree/203106a9d1cfd3678a079d8d702a7a452f00eea0/src/performance.jl#L295>`__
+`TradingLogic/src/performance.jl:295 <https://github.com/JuliaQuant/TradingLogic.jl/tree/1c1aebc35e43dfbd6e71d9d99d2afe8ab4fcd80b/src/performance.jl#L295>`__
 
 --------------
 
@@ -540,7 +540,7 @@ extreme case handling.
 limit-price is reached
 
 *source:*
-`TradingLogic/src/exchange.jl:12 <https://github.com/JuliaQuant/TradingLogic.jl/tree/203106a9d1cfd3678a079d8d702a7a452f00eea0/src/exchange.jl#L12>`__
+`TradingLogic/src/exchange.jl:12 <https://github.com/JuliaQuant/TradingLogic.jl/tree/1c1aebc35e43dfbd6e71d9d99d2afe8ab4fcd80b/src/exchange.jl#L12>`__
 
 --------------
 
@@ -549,7 +549,7 @@ quotemark::Char) `¶ <#method__printvecstring.1>`__ Print a text line
 from string vector.
 
 *source:*
-`TradingLogic/src/performance.jl:25 <https://github.com/JuliaQuant/TradingLogic.jl/tree/203106a9d1cfd3678a079d8d702a7a452f00eea0/src/performance.jl#L25>`__
+`TradingLogic/src/performance.jl:25 <https://github.com/JuliaQuant/TradingLogic.jl/tree/1c1aebc35e43dfbd6e71d9d99d2afe8ab4fcd80b/src/performance.jl#L25>`__
 
 --------------
 
@@ -558,7 +558,7 @@ from string vector.
 based on current price ``pnow``
 
 *source:*
-`TradingLogic/src/exchange.jl:29 <https://github.com/JuliaQuant/TradingLogic.jl/tree/203106a9d1cfd3678a079d8d702a7a452f00eea0/src/exchange.jl#L29>`__
+`TradingLogic/src/exchange.jl:29 <https://github.com/JuliaQuant/TradingLogic.jl/tree/1c1aebc35e43dfbd6e71d9d99d2afe8ab4fcd80b/src/exchange.jl#L29>`__
 
 --------------
 
@@ -566,7 +566,7 @@ based on current price ``pnow``
 `¶ <#method__query_orderstatus.2>`__ Order status: live version
 
 *source:*
-`TradingLogic/src/exchange.jl:41 <https://github.com/JuliaQuant/TradingLogic.jl/tree/203106a9d1cfd3678a079d8d702a7a452f00eea0/src/exchange.jl#L41>`__
+`TradingLogic/src/exchange.jl:41 <https://github.com/JuliaQuant/TradingLogic.jl/tree/1c1aebc35e43dfbd6e71d9d99d2afe8ab4fcd80b/src/exchange.jl#L41>`__
 
 --------------
 
@@ -577,7 +577,7 @@ String), dtformat\_out) `¶ <#method__runbacktestcore.1>`__ Core of the
 backtest run.
 
 *source:*
-`TradingLogic/src/TradingLogic.jl:250 <https://github.com/JuliaQuant/TradingLogic.jl/tree/203106a9d1cfd3678a079d8d702a7a452f00eea0/src/TradingLogic.jl#L250>`__
+`TradingLogic/src/TradingLogic.jl:261 <https://github.com/JuliaQuant/TradingLogic.jl/tree/1c1aebc35e43dfbd6e71d9d99d2afe8ab4fcd80b/src/TradingLogic.jl#L261>`__
 
 --------------
 
@@ -585,7 +585,7 @@ backtest run.
 change signal, true when input signal changes
 
 *source:*
-`TradingLogic/src/sigutils.jl:16 <https://github.com/JuliaQuant/TradingLogic.jl/tree/203106a9d1cfd3678a079d8d702a7a452f00eea0/src/sigutils.jl#L16>`__
+`TradingLogic/src/sigutils.jl:16 <https://github.com/JuliaQuant/TradingLogic.jl/tree/1c1aebc35e43dfbd6e71d9d99d2afe8ab4fcd80b/src/sigutils.jl#L16>`__
 
 --------------
 
@@ -593,7 +593,7 @@ change signal, true when input signal changes
 order status to ``:cancelled``
 
 *source:*
-`TradingLogic/src/types.jl:33 <https://github.com/JuliaQuant/TradingLogic.jl/tree/203106a9d1cfd3678a079d8d702a7a452f00eea0/src/types.jl#L33>`__
+`TradingLogic/src/types.jl:33 <https://github.com/JuliaQuant/TradingLogic.jl/tree/1c1aebc35e43dfbd6e71d9d99d2afe8ab4fcd80b/src/types.jl#L33>`__
 
 --------------
 
@@ -610,7 +610,7 @@ window. Specifying initial value may be tricky: see ``test/signals.jl``.
 In-place modifies ``buffer`` argument and returns updated one.
 
 *source:*
-`TradingLogic/src/sigutils.jl:33 <https://github.com/JuliaQuant/TradingLogic.jl/tree/203106a9d1cfd3678a079d8d702a7a452f00eea0/src/sigutils.jl#L33>`__
+`TradingLogic/src/sigutils.jl:33 <https://github.com/JuliaQuant/TradingLogic.jl/tree/1c1aebc35e43dfbd6e71d9d99d2afe8ab4fcd80b/src/sigutils.jl#L33>`__
 
 --------------
 
@@ -619,7 +619,7 @@ In-place modifies ``buffer`` argument and returns updated one.
 version
 
 *source:*
-`TradingLogic/src/exchange.jl:69 <https://github.com/JuliaQuant/TradingLogic.jl/tree/203106a9d1cfd3678a079d8d702a7a452f00eea0/src/exchange.jl#L69>`__
+`TradingLogic/src/exchange.jl:69 <https://github.com/JuliaQuant/TradingLogic.jl/tree/1c1aebc35e43dfbd6e71d9d99d2afe8ab4fcd80b/src/exchange.jl#L69>`__
 
 --------------
 
@@ -628,7 +628,7 @@ version
 order ID string ``ordid``
 
 *source:*
-`TradingLogic/src/exchange.jl:79 <https://github.com/JuliaQuant/TradingLogic.jl/tree/203106a9d1cfd3678a079d8d702a7a452f00eea0/src/exchange.jl#L79>`__
+`TradingLogic/src/exchange.jl:79 <https://github.com/JuliaQuant/TradingLogic.jl/tree/1c1aebc35e43dfbd6e71d9d99d2afe8ab4fcd80b/src/exchange.jl#L79>`__
 
 --------------
 
@@ -637,7 +637,7 @@ order ID string ``ordid``
 version.
 
 *source:*
-`TradingLogic/src/exchange.jl:50 <https://github.com/JuliaQuant/TradingLogic.jl/tree/203106a9d1cfd3678a079d8d702a7a452f00eea0/src/exchange.jl#L50>`__
+`TradingLogic/src/exchange.jl:50 <https://github.com/JuliaQuant/TradingLogic.jl/tree/1c1aebc35e43dfbd6e71d9d99d2afe8ab4fcd80b/src/exchange.jl#L50>`__
 
 --------------
 
@@ -645,7 +645,7 @@ version.
 `¶ <#method__submit_ordernew.2>`__ New order submission: live version
 
 *source:*
-`TradingLogic/src/exchange.jl:59 <https://github.com/JuliaQuant/TradingLogic.jl/tree/203106a9d1cfd3678a079d8d702a7a452f00eea0/src/exchange.jl#L59>`__
+`TradingLogic/src/exchange.jl:59 <https://github.com/JuliaQuant/TradingLogic.jl/tree/1c1aebc35e43dfbd6e71d9d99d2afe8ab4fcd80b/src/exchange.jl#L59>`__
 
 --------------
 
@@ -663,7 +663,7 @@ order is reached. ... Overwrites ``orde`` and returns ``Bool`` request
 status.
 
 *source:*
-`TradingLogic/src/orderhandl.jl:20 <https://github.com/JuliaQuant/TradingLogic.jl/tree/203106a9d1cfd3678a079d8d702a7a452f00eea0/src/orderhandl.jl#L20>`__
+`TradingLogic/src/orderhandl.jl:20 <https://github.com/JuliaQuant/TradingLogic.jl/tree/1c1aebc35e43dfbd6e71d9d99d2afe8ab4fcd80b/src/orderhandl.jl#L20>`__
 
 --------------
 
@@ -672,7 +672,7 @@ Float64)) `¶ <#method__tradeperffold.1>`__ Performance metrics helper
 function for use in foldl.
 
 *source:*
-`TradingLogic/src/performance.jl:186 <https://github.com/JuliaQuant/TradingLogic.jl/tree/203106a9d1cfd3678a079d8d702a7a452f00eea0/src/performance.jl#L186>`__
+`TradingLogic/src/performance.jl:186 <https://github.com/JuliaQuant/TradingLogic.jl/tree/1c1aebc35e43dfbd6e71d9d99d2afe8ab4fcd80b/src/performance.jl#L186>`__
 
 --------------
 
@@ -683,7 +683,7 @@ Amount ``Vector{Int64)`` and price ``Vector{Float64)`` from blotter in
 chronological order (returns vector tuple).
 
 *source:*
-`TradingLogic/src/performance.jl:10 <https://github.com/JuliaQuant/TradingLogic.jl/tree/203106a9d1cfd3678a079d8d702a7a452f00eea0/src/performance.jl#L10>`__
+`TradingLogic/src/performance.jl:10 <https://github.com/JuliaQuant/TradingLogic.jl/tree/1c1aebc35e43dfbd6e71d9d99d2afe8ab4fcd80b/src/performance.jl#L10>`__
 
 --------------
 
@@ -692,11 +692,11 @@ chronological order (returns vector tuple).
 collection.
 
 *source:*
-`TradingLogic/src/performance.jl:4 <https://github.com/JuliaQuant/TradingLogic.jl/tree/203106a9d1cfd3678a079d8d702a7a452f00eea0/src/performance.jl#L4>`__
+`TradingLogic/src/performance.jl:4 <https://github.com/JuliaQuant/TradingLogic.jl/tree/1c1aebc35e43dfbd6e71d9d99d2afe8ab4fcd80b/src/performance.jl#L4>`__
 
 --------------
 
  #### Order `¶ <#type__order.1>`__ Order type
 
 *source:*
-`TradingLogic/src/types.jl:5 <https://github.com/JuliaQuant/TradingLogic.jl/tree/203106a9d1cfd3678a079d8d702a7a452f00eea0/src/types.jl#L5>`__
+`TradingLogic/src/types.jl:5 <https://github.com/JuliaQuant/TradingLogic.jl/tree/1c1aebc35e43dfbd6e71d9d99d2afe8ab4fcd80b/src/types.jl#L5>`__

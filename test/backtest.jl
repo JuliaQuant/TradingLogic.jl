@@ -102,6 +102,21 @@ facts("OHLC backtest with timearray input") do
     @fact length(blotter) --> 3
     @fact posact --> 100
     @fact targ[1] --> -100
+    # if continued, exit transaction fills on 1967-10-27:
+    # verify that, i.e. no double-action next step
+    #  to be consistent with orderhandling!
+    posnew = posact + targ[1]
+    blotter, posact, targ = TradingLogic.runbacktesttarg(
+      ohlc_ta[1:itfin+1], ohlc_inds, nothing, "", pfill, position_initial,
+      targetfun, targetqty, mafast, maslow)
+    @fact posnew --> posact
+    @fact targ[1] --> 0 # otherwise double position change happens at this step
+    posnew = posact + targ[1]
+    blotter, posact, targ = TradingLogic.runbacktesttarg(
+      ohlc_ta[1:itfin+2], ohlc_inds, nothing, "", pfill, position_initial,
+      targetfun, targetqty, mafast, maslow)
+    @fact posnew --> posact
+    @fact targ[1] --> 0
 
     # final step: zero position, no changes targeted
     itfin = findfirst(ohlc_ta.timestamp .== Dates.Date(1967,10,30))

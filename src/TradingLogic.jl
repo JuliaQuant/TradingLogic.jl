@@ -243,7 +243,18 @@ function runbacktesttarg{M}(ohlc_ta::TimeSeries.TimeArray{Float64,2,M},
                             fileout, dtformat_out)
 
   # blotter, latest position, latest targets
-  return blotter, pos_act_mut[1], s_targ.value
+  ##println("timestep")
+  ##println(s_ohlc.value[1])
+  if haskey(blotter, s_ohlc.value[1])
+    # current step had position update;
+    # avoid double action, be consistent with orderhandling!:
+    # no forther target position change at this step
+    newtarg = 0
+  else
+    newtarg = s_targ.value
+  end
+  
+  return blotter, pos_act_mut[1], newtarg
 end
 
 "Core of the backtest run."
