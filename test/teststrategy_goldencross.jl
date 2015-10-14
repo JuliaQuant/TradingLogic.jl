@@ -17,7 +17,7 @@ facts("Goldencross trading logic") do
     # up, zero position
     @fact ft(:trendup, 0) --> (tq, stlim)
     # up, position less than target (e.g. partial fill)
-    p = int(tq/2)
+    p = round(Int64, tq/2)
     @fact ft(:trendup, p) --> (tq - p, stlim)
 
     # down: sell
@@ -83,7 +83,7 @@ facts("Goldencross strategy backtesting") do
 
     s_ohlc = Reactive.Input((Dates.DateTime(ohlc_test.timestamp[1]),
                              vec(ohlc_test.values[1,:])))
-    ohlc_inds = (Symbol => Int64)[]
+    ohlc_inds = Dict{Symbol,Int64}()
     ohlc_inds[:open] = 1
     ohlc_inds[:close] = 4
 

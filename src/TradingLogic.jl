@@ -1,20 +1,10 @@
-if VERSION < v"0.4-"
-    using Dates
-else
-    using Base.Dates
-end
+VERSION >= v"0.4.0" && __precompile__(true)
 
-using Reactive, Match, TimeSeries, Compat
+using Base.Dates, Reactive, Match, TimeSeries, Compat
 
 module TradingLogic
 
-if VERSION < v"0.4-"
-    using Dates
-else
-    using Base.Dates
-end
-
-using Reactive, Match, TimeSeries, Compat
+using Base.Dates, Reactive, Match, TimeSeries, Compat
 
 export runtrading!, runbacktest, runbacktesttarg
 export emptyblotter, printblotter, writeblotter
@@ -76,8 +66,10 @@ function runtrading!(blotter::Blotter,
   position_actual_mut = [position_initial]
 
   # target signal: strategy-specific
-  s_target = apply(targetfun, tuple(s_ohlc, ohlc_inds,
-                                    position_actual_mut, strategy_args...))
+  ##s_target = apply(targetfun, tuple(s_ohlc, ohlc_inds,
+  ##                                  position_actual_mut, strategy_args...))
+  s_target = targetfun(tuple(s_ohlc, ohlc_inds,
+                                    position_actual_mut, strategy_args...)...)
 
   # current time signal from OHLC timestamp
   s_tnow = Reactive.lift(s -> s[1], s_ohlc, typ=DateTime)
@@ -121,8 +113,10 @@ function runtrading!(blotter::Blotter,
   position_actual_mut = [position_initial]
 
   # target signal: strategy-specific
-  s_target = apply(targetfun, tuple(s_ohlc, ohlc_inds,
-                                    position_actual_mut, strategy_args...))
+  ##s_target = apply(targetfun, tuple(s_ohlc, ohlc_inds,
+  ##                                  position_actual_mut, strategy_args...))
+  s_target = targetfun(tuple(s_ohlc, ohlc_inds,
+                                    position_actual_mut, strategy_args...)...)
 
   # current time signal from OHLC timestamp
   s_tnow = Reactive.lift(s -> s[1], s_ohlc, typ=DateTime)
@@ -173,7 +167,7 @@ optimization objective function to improve performance.
 """
 function runbacktest{M}(ohlc_ta::TimeSeries.TimeArray{Float64,2,M},
                         ohlc_inds::Dict{Symbol,Int64},
-                        fileout::Union(Nothing,String),
+                        fileout::Union{Void,AbstractString},
                         dtformat_out,
                         pfill::Symbol,
                         position_initial::Int64,
@@ -220,7 +214,7 @@ determine the latest timestep actions.
 """
 function runbacktesttarg{M}(ohlc_ta::TimeSeries.TimeArray{Float64,2,M},
                             ohlc_inds::Dict{Symbol,Int64},
-                            fileout::Union(Nothing,String),
+                            fileout::Union{Void,AbstractString},
                             dtformat_out,
                             pfill::Symbol,
                             position_initial::Int64,
@@ -262,7 +256,7 @@ function runbacktestcore{M}(ohlc_ta::TimeSeries.TimeArray{Float64,2,M},
                             s_ohlc::Input{OHLC},
                             s_status::Signal{@compat(Tuple{Bool, Float64})},
                             s_perf::Signal{@compat(Tuple{Float64, Float64})},
-                            fileout::Union(Nothing,String),
+                            fileout::Union{Void,AbstractString},
                             dtformat_out)
   nt = length(ohlc_ta)
   vequity = zeros(nt)
@@ -273,7 +267,7 @@ function runbacktestcore{M}(ohlc_ta::TimeSeries.TimeArray{Float64,2,M},
     # prepare file to write to at each timestep
     fout = open(fileout, "w")
     separator = ','; quotemark = '"'
-    rescols = ["Timestamp", ohlc_ta.colnames, "CumPnL", "DDown"]
+    rescols = ["Timestamp"; ohlc_ta.colnames; "CumPnL"; "DDown"]
     printvecstring(fout, rescols, separator, quotemark)
     writeout = true
   end

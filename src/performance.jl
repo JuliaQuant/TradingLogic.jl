@@ -40,7 +40,7 @@ end
 
 "Print blotter transactions. Resembles DataFrames.printtable."
 function printblotter(io::IO, blotter::Blotter;
-                      dtformat::String = "yyyy-mm-ddTHH:MM:SS",
+                      dtformat::AbstractString = "yyyy-mm-ddTHH:MM:SS",
                       separator::Char = ',', quotemark::Char = '"')
   # ordered timestamps
   vt = vtblotter(blotter)
@@ -69,8 +69,8 @@ function printblotter(io::IO, blotter::Blotter;
 end
 
 "Write blotter transactions to file."
-function writeblotter(filename::String, blotter::Blotter;
-                      dtformat::String = "yyy-mm-ddTHH:MM:SS",
+function writeblotter(filename::AbstractString, blotter::Blotter;
+                      dtformat::AbstractString = "yyy-mm-ddTHH:MM:SS",
                       separator::Char = ',', quotemark::Char = '"')
   open(filename, "w") do io
     printblotter(io, blotter,

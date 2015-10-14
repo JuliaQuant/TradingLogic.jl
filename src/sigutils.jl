@@ -40,4 +40,4 @@ end
 Initialization of `nbuff`-size float-elements buffer
 with NaNs and last element `xinit`.
 """
-initbuff(nbuff::Int64, xinit::Float64) = [fill(NaN, nbuff-1), xinit]
+initbuff(nbuff::Int64, xinit::Float64) = [fill(NaN, nbuff-1); xinit]

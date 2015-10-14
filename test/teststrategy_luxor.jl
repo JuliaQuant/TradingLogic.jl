@@ -17,13 +17,13 @@ facts("Luxor trading logic") do
     # enter long
     @fact ft(:trendup, 0) --> (tq, [165.0, 155.0])
     # enter long partial fill
-    p = int(tq/2)
+    p = round(Int64, tq/2)
     @fact ft(:trendup, p) --> (tq - p, [165.0, 155.0])
 
     # enter short
     @fact ft(:trenddown, 0) --> (-tq, [140.0, 150.0])
     # enter short partial fill
-    p = -int(tq/2)
+    p = -round(Int64, tq/2)
     @fact ft(:trenddown, p) --> (-abs(tq-p), [140.0, 150.0])
 
     # hold position in line with the market state
@@ -32,12 +32,12 @@ facts("Luxor trading logic") do
 
     # exit long position
     @fact ft(:trenddown, tq) --> (-tq, stlim)
-    p = int(tq/2)
+    p = round(Int64, tq/2)
     @fact ft(:trenddown, p) --> (-p, stlim)
 
     # exit short position
     @fact ft(:trendup, -tq) --> (tq, stlim)
-    p = -int(tq/2)
+    p = -round(Int64, tq/2)
     @fact ft(:trendup, p) --> (abs(p), stlim)
 
     # undefined: wait
@@ -57,7 +57,7 @@ facts("Luxor strategy backtesting") do
     ### TODO change data input
     s_ohlc = Reactive.Input((Dates.DateTime(ohlc.timestamp[1]),
                              vec(ohlc.values[1,:])))
-    ohlc_inds = (Symbol => Int64)[]
+    ohlc_inds = Dict{Symbol,Int64}()
     ohlc_inds[:open] = 1
     ohlc_inds[:high] = 2
     ohlc_inds[:low] = 3

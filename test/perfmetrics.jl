@@ -31,7 +31,8 @@ facts("Trading metrics from transactions blotter") do
     @fact rcsv[1,2] --> "Amount"
     @fact rcsv[2,1] --> Dates.format(tlong, dtfmt)
     @fact rcsv[4,1] --> Dates.format(texit, dtfmt)
-    @fact int(rcsv[3,2]) --> -(along + ashort)
+    ##@fact int(rcsv[3,2]) --> -(along + ashort)
+    @fact round(Int64, rcsv[3,2]) --> -(along + ashort)
     @fact float(rcsv[4,3]) --> roughly(p3)
   end
   context("Long enter with partial fill") do

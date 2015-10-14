@@ -1,4 +1,4 @@
-rel(path::String) = joinpath(splitdir(@__FILE__)[1], path)
+rel(path::AbstractString) = joinpath(splitdir(@__FILE__)[1], path)
 
 facts("OHLC backtest with timearray input") do
   # using quantstrat goldencross test
@@ -74,7 +74,7 @@ facts("OHLC backtest with timearray input") do
     run(`rm $fileout`)
     @fact length(taf) --> length(ohlc_ta)
     @fact taf.timestamp --> ohlc_ta.timestamp
-    @fact taf.colnames --> [ohlc_ta.colnames, "CumPnL", "DDown"]
+    @fact taf.colnames --> [ohlc_ta.colnames; "CumPnL"; "DDown"]
     @fact taf.values[:,1:end-2] --> roughly(ohlc_ta.values)
     @fact taf["CumPnL"].values[1] --> roughly(0.0)
     @fact taf["DDown"].values[1] --> roughly(0.0)
