@@ -46,7 +46,7 @@ function goldencrossposlogic(mktstate::Symbol,
 end
 
 "Target signal for goldencross strategy."
-function goldencrosstarget(s_ohlc::Input{OHLC},
+function goldencrosstarget(s_ohlc::Signal{OHLC},
                            ohlc_inds::Dict{Symbol,Int64},
                            position_actual_mut::Vector{Int64},
                            targetqty::Int64,

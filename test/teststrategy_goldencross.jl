@@ -81,8 +81,8 @@ facts("Goldencross strategy backtesting") do
       vdate[i] = vdate[i] + oneday
     end
 
-    s_ohlc = Reactive.Input((Dates.DateTime(ohlc_test.timestamp[1]),
-                             vec(ohlc_test.values[1,:])))
+    s_ohlc = Reactive.Signal((Dates.DateTime(ohlc_test.timestamp[1]),
+                              vec(ohlc_test.values[1,:])))
     ohlc_inds = Dict{Symbol,Int64}()
     ohlc_inds[:open] = 1
     ohlc_inds[:close] = 4

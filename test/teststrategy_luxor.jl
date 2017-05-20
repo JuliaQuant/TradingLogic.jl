@@ -55,8 +55,8 @@ facts("Luxor strategy backtesting") do
     pthresh = 10.0
 
     ### TODO change data input
-    s_ohlc = Reactive.Input((Dates.DateTime(ohlc.timestamp[1]),
-                             vec(ohlc.values[1,:])))
+    s_ohlc = Reactive.Signal((Dates.DateTime(ohlc.timestamp[1]),
+                              vec(ohlc.values[1,:])))
     ohlc_inds = Dict{Symbol,Int64}()
     ohlc_inds[:open] = 1
     ohlc_inds[:high] = 2

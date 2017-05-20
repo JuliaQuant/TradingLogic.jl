@@ -54,7 +54,7 @@ See `orderhandling!` for the PnL details.
 """
 function runtrading!(blotter::Blotter,
                      backtest::Bool,
-                     s_ohlc::Input{OHLC},
+                     s_ohlc::Signal{OHLC},
                      ohlc_inds::Dict{Symbol,Int64},
                      s_pnow::Signal{Float64},
                      position_initial::Int64,
@@ -104,7 +104,7 @@ This method is useful for feeding current step's targets
 to some external code.
 """
 function runtrading!(blotter::Blotter,
-                     s_ohlc::Input{OHLC},
+                     s_ohlc::Signal{OHLC},
                      ohlc_inds::Dict{Symbol,Int64},
                      s_pnow::Signal{Float64},
                      position_initial::Int64,
@@ -173,8 +173,8 @@ function runbacktest{M}(ohlc_ta::TimeSeries.TimeArray{Float64,2,M},
                         position_initial::Int64,
                         targetfun::Function, strategy_args...)
   # initialize signals
-  s_ohlc = Input((Dates.DateTime(ohlc_ta.timestamp[1]),
-                  vec(ohlc_ta.values[1,:])))
+  s_ohlc = Signal((Dates.DateTime(ohlc_ta.timestamp[1]),
+                   vec(ohlc_ta.values[1,:])))
   s_pnow = lift(s -> s[2][ohlc_inds[pfill]], s_ohlc, typ=Float64)
   blotter = emptyblotter()
   s_status = runtrading!(blotter, true, s_ohlc, ohlc_inds, s_pnow,
@@ -220,8 +220,8 @@ function runbacktesttarg{M}(ohlc_ta::TimeSeries.TimeArray{Float64,2,M},
                             position_initial::Int64,
                             targetfun::Function, strategy_args...)
   # initialize signals
-  s_ohlc = Input((Dates.DateTime(ohlc_ta.timestamp[1]),
-                  vec(ohlc_ta.values[1,:])))
+  s_ohlc = Signal((Dates.DateTime(ohlc_ta.timestamp[1]),
+                   vec(ohlc_ta.values[1,:])))
   nt = length(ohlc_ta)
   s_pnow = lift(s -> s[2][ohlc_inds[pfill]], s_ohlc, typ=Float64)
   blotter = emptyblotter()
@@ -253,7 +253,7 @@ end
 
 "Core of the backtest run."
 function runbacktestcore{M}(ohlc_ta::TimeSeries.TimeArray{Float64,2,M},
-                            s_ohlc::Input{OHLC},
+                            s_ohlc::Signal{OHLC},
                             s_status::Signal{@compat(Tuple{Bool, Float64})},
                             s_perf::Signal{@compat(Tuple{Float64, Float64})},
                             fileout::Union{Void,AbstractString},

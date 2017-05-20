@@ -57,7 +57,7 @@ function luxorposlogic(mktstate::Symbol,
 end
 
 "Target signal for luxor strategy."
-function luxortarget(s_ohlc::Input{OHLC},
+function luxortarget(s_ohlc::Signal{OHLC},
                      ohlc_inds::Dict{Symbol,Int64},
                      position_actual_mut::Vector{Int64},
                      nsma_fast::Int64, nsma_slow::Int64,

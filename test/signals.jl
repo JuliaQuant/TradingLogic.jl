@@ -3,7 +3,7 @@ using Reactive
 
 facts("Working with signals") do
   context("Change detection") do
-    s_inp = Reactive.Input(5)
+    s_inp = Reactive.Signal(5)
     s_chg = TradingLogic.schange(s_inp)
     push!(s_inp, 5)
     @fact s_chg.value --> false
@@ -19,7 +19,7 @@ facts("Working with signals") do
     vsma = fill(NaN, 100)
     [vsma[i] = mean(vval[(i-nsma+1):i]) for i = 10:100]
 
-    s_inp = Reactive.Input(vval[1])
+    s_inp = Reactive.Signal(vval[1])
     s_sma = Reactive.lift(mean, Reactive.foldl(
                             TradingLogic.sighistbuffer!,
                             TradingLogic.initbuff(nsma, s_inp.value),
