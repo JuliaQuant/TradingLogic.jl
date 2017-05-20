@@ -72,18 +72,18 @@ function runtrading!(blotter::Blotter,
                                     position_actual_mut, strategy_args...)...)
 
   # current time signal from OHLC timestamp
-  s_tnow = Reactive.lift(s -> s[1], s_ohlc, typ=DateTime)
+  s_tnow = Reactive.map(s -> s[1], s_ohlc, typ=DateTime)
 
   # general order handling part
   order_current = emptyorder()
-  s_overallstatus = lift(
+  s_overallstatus = map(
     (tgt, pnow, tnow) -> orderhandling!(tgt, pnow, tnow,
                                         position_actual_mut,
                                         order_current,
                                         blotter, backtest),
     s_target, s_pnow, s_tnow, typ=@compat(Tuple{Bool,Float64}))
   # error notification
-  lift(s -> tradesyserror(s[1]), s_overallstatus, typ=Bool)
+  map(s -> tradesyserror(s[1]), s_overallstatus, typ=Bool)
 
   return s_overallstatus
 end
@@ -119,11 +119,11 @@ function runtrading!(blotter::Blotter,
                                     position_actual_mut, strategy_args...)...)
 
   # current time signal from OHLC timestamp
-  s_tnow = Reactive.lift(s -> s[1], s_ohlc, typ=DateTime)
+  s_tnow = Reactive.map(s -> s[1], s_ohlc, typ=DateTime)
 
   # general order handling part
   order_current = emptyorder()
-  s_overallstatus = lift(
+  s_overallstatus = map(
     (tgt, pnow, tnow) -> orderhandling!(tgt, pnow, tnow,
                                         position_actual_mut,
                                         order_current,
@@ -175,7 +175,7 @@ function runbacktest{M}(ohlc_ta::TimeSeries.TimeArray{Float64,2,M},
   # initialize signals
   s_ohlc = Signal((Dates.DateTime(ohlc_ta.timestamp[1]),
                    vec(ohlc_ta.values[1,:])))
-  s_pnow = lift(s -> s[2][ohlc_inds[pfill]], s_ohlc, typ=Float64)
+  s_pnow = map(s -> s[2][ohlc_inds[pfill]], s_ohlc, typ=Float64)
   blotter = emptyblotter()
   s_status = runtrading!(blotter, true, s_ohlc, ohlc_inds, s_pnow,
                          position_initial, targetfun, strategy_args...)
@@ -223,7 +223,7 @@ function runbacktesttarg{M}(ohlc_ta::TimeSeries.TimeArray{Float64,2,M},
   s_ohlc = Signal((Dates.DateTime(ohlc_ta.timestamp[1]),
                    vec(ohlc_ta.values[1,:])))
   nt = length(ohlc_ta)
-  s_pnow = lift(s -> s[2][ohlc_inds[pfill]], s_ohlc, typ=Float64)
+  s_pnow = map(s -> s[2][ohlc_inds[pfill]], s_ohlc, typ=Float64)
   blotter = emptyblotter()
 
   # using method with targeting info output

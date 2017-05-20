@@ -14,9 +14,9 @@ end
 
 "Bool change signal, true when input signal changes"
 function schange{T}(s_inp::Signal{T})
-  return lift(s -> s[1],
-              foldl(fsigchange, (false, s_inp.value), s_inp),
-              typ = Bool)
+  return map(s -> s[1],
+             foldl(fsigchange, (false, s_inp.value), s_inp),
+             typ = Bool)
 end
 
 """

@@ -89,7 +89,7 @@ facts("Goldencross strategy backtesting") do
 
     # backtest at next-open price
     # quantstrat fills tracsactions at next open on enter-signal
-    s_pnow = Reactive.lift(s -> s[2][ohlc_inds[:open]], s_ohlc, typ=Float64)
+    s_pnow = Reactive.map(s -> s[2][ohlc_inds[:open]], s_ohlc, typ=Float64)
     blotter = TradingLogic.emptyblotter()
 
     s_status = TradingLogic.runtrading!(

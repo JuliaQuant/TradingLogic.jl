@@ -69,17 +69,17 @@ function luxortarget(s_ohlc::Signal{OHLC},
   buffpclose!(buff::Vector{Float64}, tohlc::OHLC) =
     sighistbuffer!(buff, tohlc[2][ohlc_inds[:close]])
   pcloseinit = s_ohlc.value[2][ohlc_inds[:close]]
-  s_sma_fast = lift(mean,
-                    foldl(buffpclose!, initbuff(nsma_fast, pcloseinit), s_ohlc),
-                    typ=Float64)
-  s_sma_slow = lift(mean,
-                    foldl(buffpclose!, initbuff(nsma_slow, pcloseinit), s_ohlc),
-                    typ=Float64)
-  s_high = lift(s -> s[2][ohlc_inds[:high]], s_ohlc, typ=Float64)
-  s_low = lift(s -> s[2][ohlc_inds[:low]], s_ohlc, typ=Float64)
+  s_sma_fast = map(mean,
+                   foldl(buffpclose!, initbuff(nsma_fast, pcloseinit), s_ohlc),
+                   typ=Float64)
+  s_sma_slow = map(mean,
+                   foldl(buffpclose!, initbuff(nsma_slow, pcloseinit), s_ohlc),
+                   typ=Float64)
+  s_high = map(s -> s[2][ohlc_inds[:high]], s_ohlc, typ=Float64)
+  s_low = map(s -> s[2][ohlc_inds[:low]], s_ohlc, typ=Float64)
 
   # market state signal
-  s_mktstate = lift(luxormktstate, s_sma_fast, s_sma_slow, typ=Symbol)
+  s_mktstate = map(luxormktstate, s_sma_fast, s_sma_slow, typ=Symbol)
 
   # market state change Bool-signal
   s_mktchg = schange(s_mktstate)
@@ -89,10 +89,10 @@ function luxortarget(s_ohlc::Signal{OHLC},
   s_mktchg_low = keepwhen(s_mktchg, s_low.value, s_low)
 
   # target position updates only when market state input changes
-  s_target = lift((mks, h, l) -> luxorposlogic(mks, h, l,
-                                               pthreshold, targetqty,
-                                               position_actual_mut),
-                  s_mktstate, s_mktchg_high, s_mktchg_low)
+  s_target = map((mks, h, l) -> luxorposlogic(mks, h, l,
+                                              pthreshold, targetqty,
+                                              position_actual_mut),
+                 s_mktstate, s_mktchg_high, s_mktchg_low)
   # targeting tuple to pass to the order processing function
   return s_target
 end
