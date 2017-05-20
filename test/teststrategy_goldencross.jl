@@ -65,7 +65,7 @@ facts("Goldencross strategy backtesting") do
       rel("quantstrat/goldencross/transactions.csv"),
       header = true,
       names = [:datestr, :qty, :prc, :fees, :val, :avgcost, :pl],
-      eltypes = [UTF8String, Int64, Float64, Float64,
+      eltypes = [String, Int64, Float64, Float64,
                  Float64, Float64, Float64])[2:end,:]
     # vectors to verify
     vqty = convert(Array, txnsdf[:qty])
