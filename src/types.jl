@@ -3,17 +3,17 @@ abstract TradingStructures
 
 "Order type"
 type Order <: TradingStructures
-  id::ASCIIString # unique order id for submission/tracking
+  id::String # unique order id for submission/tracking
   quantity::Int64 # abs. value of position change targeted
   price::Float64 # limit price, set to NaN for market order
   side::Symbol # :buy :sell (no need for :short <=> {position = 0 with sell})
   ordertype::Symbol # :market :limit
   status::Symbol # :pending :complete :cancelled
-  trigger::ASCIIString # custom string for tracking what triggered the order
+  trigger::String # custom string for tracking what triggered the order
 
-  function Order(id::ASCIIString, quantity::Int64, price::Float64,
+  function Order(id::String, quantity::Int64, price::Float64,
                  side::Symbol, ordertype::Symbol, status::Symbol,
-                 trigger::ASCIIString)
+                 trigger::String)
     (side == :buy || side == :sell) || error("Unknown order side")
     (ordertype == :market || ordertype == :limit) || error("Unsupported order type")
     if !(status == :pending || status == :complete || status == :cancelled)

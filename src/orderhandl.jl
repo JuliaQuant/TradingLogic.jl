@@ -1,7 +1,7 @@
 ## order processing (generic, not stargety-specific)
 
 "Generate oder ID string for a new order"
-function neworderid(trig::ASCIIString)
+function neworderid(trig::String)
   ### TODO hash order id to encrypt trigger-string
   return string(unix2datetime(time())) * "_" * string(trig)
 end
@@ -19,7 +19,7 @@ Overwrites `orde` and returns `Bool` request status.
 """
 function targ2order!(orde::Order,
                      targ::Targ,
-                     trig::ASCIIString,
+                     trig::String,
                      position_actual::Int64,
                      backtest::Bool)
   # this function should be called when position change is needed

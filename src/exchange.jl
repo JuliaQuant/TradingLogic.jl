@@ -38,7 +38,7 @@ function query_orderstatus(orde::Order, pnow::Float64)
 end
 
 "Order status: live version"
-function query_orderstatus(ordid::ASCIIString)
+function query_orderstatus(ordid::String)
   ### TODO
   return resp_orderstatus
 end
@@ -76,7 +76,7 @@ function submit_ordercancel(orde::Order)
 end
 
 "Cancel order live version: provide order ID string `ordid`"
-function submit_ordercancel(ordid::ASCIIString)
+function submit_ordercancel(ordid::String)
   ### TODO
   return resp_status
 end
