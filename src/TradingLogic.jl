@@ -1,4 +1,4 @@
-VERSION >= v"0.4.0" && __precompile__(true)
+__precompile__(true)
 
 using Base.Dates, Reactive, Match, TimeSeries, Compat
 
@@ -247,7 +247,7 @@ function runbacktesttarg{M}(ohlc_ta::TimeSeries.TimeArray{Float64,2,M},
   else
     newtarg = s_targ.value
   end
-  
+
   return blotter, pos_act_mut[1], newtarg
 end
 
