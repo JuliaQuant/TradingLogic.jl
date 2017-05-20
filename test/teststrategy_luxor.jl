@@ -55,8 +55,8 @@ facts("Luxor strategy backtesting") do
     pthresh = 10.0
 
     ### TODO change data input
-    s_ohlc = Reactive.Input((Dates.DateTime(ohlc.timestamp[1]),
-                             vec(ohlc.values[1,:])))
+    s_ohlc = Reactive.Signal((Dates.DateTime(ohlc.timestamp[1]),
+                              vec(ohlc.values[1,:])))
     ohlc_inds = Dict{Symbol,Int64}()
     ohlc_inds[:open] = 1
     ohlc_inds[:high] = 2
@@ -65,7 +65,7 @@ facts("Luxor strategy backtesting") do
 
     # backtest at next-open price
     # quantstrat fills tracsactions at next open on enter-signal
-    s_pnow = Reactive.lift(s -> s[2][ohlc_inds[:open]], s_ohlc, typ=Float64)
+    s_pnow = Reactive.map(s -> s[2][ohlc_inds[:open]], s_ohlc, typ=Float64)
     blotter = TradingLogic.emptyblotter()
 
     s_status = TradingLogic.runtrading!(

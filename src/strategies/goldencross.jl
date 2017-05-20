@@ -46,7 +46,7 @@ function goldencrossposlogic(mktstate::Symbol,
 end
 
 "Target signal for goldencross strategy."
-function goldencrosstarget(s_ohlc::Input{OHLC},
+function goldencrosstarget(s_ohlc::Signal{OHLC},
                            ohlc_inds::Dict{Symbol,Int64},
                            position_actual_mut::Vector{Int64},
                            targetqty::Int64,
@@ -59,21 +59,21 @@ function goldencrosstarget(s_ohlc::Input{OHLC},
   buffpclose!(buff::Vector{Float64}, tohlc::OHLC) =
     sighistbuffer!(buff, tohlc[2][ohlc_inds[:close]])
   pcloseinit = s_ohlc.value[2][ohlc_inds[:close]]
-  s_sma_fast = lift(mean,
-                    foldl(buffpclose!, initbuff(nsma_fast, pcloseinit), s_ohlc),
-                    typ=Float64)
-  s_sma_slow = lift(mean,
-                    foldl(buffpclose!, initbuff(nsma_slow, pcloseinit), s_ohlc),
-                    typ=Float64)
+  s_sma_fast = map(mean,
+                   foldp(buffpclose!, initbuff(nsma_fast, pcloseinit), s_ohlc),
+                   typ=Float64)
+  s_sma_slow = map(mean,
+                   foldp(buffpclose!, initbuff(nsma_slow, pcloseinit), s_ohlc),
+                   typ=Float64)
 
   # market state signal
-  s_mktstate = lift(goldencrossmktstate, s_sma_fast, s_sma_slow, typ=Symbol)
+  s_mktstate = map(goldencrossmktstate, s_sma_fast, s_sma_slow, typ=Symbol)
 
   # target position updates only when market state input changes
-  s_target = lift(mks -> goldencrossposlogic(mks,
-                                             targetqty,
-                                             position_actual_mut),
-                  s_mktstate)
+  s_target = map(mks -> goldencrossposlogic(mks,
+                                            targetqty,
+                                            position_actual_mut),
+                 s_mktstate)
   # targeting tuple to pass to the order processing function
   return s_target
 end

@@ -182,7 +182,7 @@ function tradepnlfinal(blotter::Blotter, pnow::Float64)
   return pnlb + acsumb * (pnow - pblast)
 end
 
-"Performance metrics helper function for use in foldl."
+"Performance metrics helper function for use in foldp."
 function tradeperffold(perfprev::@compat(Tuple{Float64,Float64}), statusnow::@compat(Tuple{Bool, Float64}))
   # current max. PnL
   pnlprev = perfprev[1]
@@ -210,7 +210,7 @@ Output tuple-signal components:
 NOTE: Use this function only if needed, otherwise save resources; it is
 not required for running the trading session.
 """
-tradeperfcurr(s_status::Signal{@compat(Tuple{Bool, Float64})}) = foldl(tradeperffold, (0.0, 0.0), s_status)
+tradeperfcurr(s_status::Signal{@compat(Tuple{Bool, Float64})}) = foldp(tradeperffold, (0.0, 0.0), s_status)
 
 """
 Selected metrics for completed trades out of transactions blotter.

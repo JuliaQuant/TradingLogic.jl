@@ -1,4 +1,4 @@
-VERSION >= v"0.4.0" && __precompile__(true)
+__precompile__(true)
 
 using Base.Dates, Reactive, Match, TimeSeries, Compat
 
@@ -54,7 +54,7 @@ See `orderhandling!` for the PnL details.
 """
 function runtrading!(blotter::Blotter,
                      backtest::Bool,
-                     s_ohlc::Input{OHLC},
+                     s_ohlc::Signal{OHLC},
                      ohlc_inds::Dict{Symbol,Int64},
                      s_pnow::Signal{Float64},
                      position_initial::Int64,
@@ -72,18 +72,18 @@ function runtrading!(blotter::Blotter,
                                     position_actual_mut, strategy_args...)...)
 
   # current time signal from OHLC timestamp
-  s_tnow = Reactive.lift(s -> s[1], s_ohlc, typ=DateTime)
+  s_tnow = Reactive.map(s -> s[1], s_ohlc, typ=DateTime)
 
   # general order handling part
   order_current = emptyorder()
-  s_overallstatus = lift(
+  s_overallstatus = map(
     (tgt, pnow, tnow) -> orderhandling!(tgt, pnow, tnow,
                                         position_actual_mut,
                                         order_current,
                                         blotter, backtest),
     s_target, s_pnow, s_tnow, typ=@compat(Tuple{Bool,Float64}))
   # error notification
-  lift(s -> tradesyserror(s[1]), s_overallstatus, typ=Bool)
+  map(s -> tradesyserror(s[1]), s_overallstatus, typ=Bool)
 
   return s_overallstatus
 end
@@ -104,7 +104,7 @@ This method is useful for feeding current step's targets
 to some external code.
 """
 function runtrading!(blotter::Blotter,
-                     s_ohlc::Input{OHLC},
+                     s_ohlc::Signal{OHLC},
                      ohlc_inds::Dict{Symbol,Int64},
                      s_pnow::Signal{Float64},
                      position_initial::Int64,
@@ -119,11 +119,11 @@ function runtrading!(blotter::Blotter,
                                     position_actual_mut, strategy_args...)...)
 
   # current time signal from OHLC timestamp
-  s_tnow = Reactive.lift(s -> s[1], s_ohlc, typ=DateTime)
+  s_tnow = Reactive.map(s -> s[1], s_ohlc, typ=DateTime)
 
   # general order handling part
   order_current = emptyorder()
-  s_overallstatus = lift(
+  s_overallstatus = map(
     (tgt, pnow, tnow) -> orderhandling!(tgt, pnow, tnow,
                                         position_actual_mut,
                                         order_current,
@@ -173,9 +173,9 @@ function runbacktest{M}(ohlc_ta::TimeSeries.TimeArray{Float64,2,M},
                         position_initial::Int64,
                         targetfun::Function, strategy_args...)
   # initialize signals
-  s_ohlc = Input((Dates.DateTime(ohlc_ta.timestamp[1]),
-                  vec(ohlc_ta.values[1,:])))
-  s_pnow = lift(s -> s[2][ohlc_inds[pfill]], s_ohlc, typ=Float64)
+  s_ohlc = Signal((Dates.DateTime(ohlc_ta.timestamp[1]),
+                   vec(ohlc_ta.values[1,:])))
+  s_pnow = map(s -> s[2][ohlc_inds[pfill]], s_ohlc, typ=Float64)
   blotter = emptyblotter()
   s_status = runtrading!(blotter, true, s_ohlc, ohlc_inds, s_pnow,
                          position_initial, targetfun, strategy_args...)
@@ -220,10 +220,10 @@ function runbacktesttarg{M}(ohlc_ta::TimeSeries.TimeArray{Float64,2,M},
                             position_initial::Int64,
                             targetfun::Function, strategy_args...)
   # initialize signals
-  s_ohlc = Input((Dates.DateTime(ohlc_ta.timestamp[1]),
-                  vec(ohlc_ta.values[1,:])))
+  s_ohlc = Signal((Dates.DateTime(ohlc_ta.timestamp[1]),
+                   vec(ohlc_ta.values[1,:])))
   nt = length(ohlc_ta)
-  s_pnow = lift(s -> s[2][ohlc_inds[pfill]], s_ohlc, typ=Float64)
+  s_pnow = map(s -> s[2][ohlc_inds[pfill]], s_ohlc, typ=Float64)
   blotter = emptyblotter()
 
   # using method with targeting info output
@@ -247,13 +247,13 @@ function runbacktesttarg{M}(ohlc_ta::TimeSeries.TimeArray{Float64,2,M},
   else
     newtarg = s_targ.value
   end
-  
+
   return blotter, pos_act_mut[1], newtarg
 end
 
 "Core of the backtest run."
 function runbacktestcore{M}(ohlc_ta::TimeSeries.TimeArray{Float64,2,M},
-                            s_ohlc::Input{OHLC},
+                            s_ohlc::Signal{OHLC},
                             s_status::Signal{@compat(Tuple{Bool, Float64})},
                             s_perf::Signal{@compat(Tuple{Float64, Float64})},
                             fileout::Union{Void,AbstractString},

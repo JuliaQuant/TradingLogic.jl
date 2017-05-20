@@ -65,7 +65,7 @@ facts("Goldencross strategy backtesting") do
       rel("quantstrat/goldencross/transactions.csv"),
       header = true,
       names = [:datestr, :qty, :prc, :fees, :val, :avgcost, :pl],
-      eltypes = [UTF8String, Int64, Float64, Float64,
+      eltypes = [String, Int64, Float64, Float64,
                  Float64, Float64, Float64])[2:end,:]
     # vectors to verify
     vqty = convert(Array, txnsdf[:qty])
@@ -81,15 +81,15 @@ facts("Goldencross strategy backtesting") do
       vdate[i] = vdate[i] + oneday
     end
 
-    s_ohlc = Reactive.Input((Dates.DateTime(ohlc_test.timestamp[1]),
-                             vec(ohlc_test.values[1,:])))
+    s_ohlc = Reactive.Signal((Dates.DateTime(ohlc_test.timestamp[1]),
+                              vec(ohlc_test.values[1,:])))
     ohlc_inds = Dict{Symbol,Int64}()
     ohlc_inds[:open] = 1
     ohlc_inds[:close] = 4
 
     # backtest at next-open price
     # quantstrat fills tracsactions at next open on enter-signal
-    s_pnow = Reactive.lift(s -> s[2][ohlc_inds[:open]], s_ohlc, typ=Float64)
+    s_pnow = Reactive.map(s -> s[2][ohlc_inds[:open]], s_ohlc, typ=Float64)
     blotter = TradingLogic.emptyblotter()
 
     s_status = TradingLogic.runtrading!(

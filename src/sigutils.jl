@@ -1,9 +1,9 @@
 ## utilities for working with Reactive.jl signals
-## NOTE: foldl and foldr in Reactive.jl are as in e.g. Haskell
+## NOTE: foldp and foldr in Reactive.jl are as in e.g. Haskell
 ##  https://wiki.haskell.org/Fold
 
 """
-Signal value change function to be used with foldl;
+Signal value change function to be used with foldp;
 use with (Bool, signal_t=0) tuple as initial fold value
 """
 function fsigchange(prev, x)
@@ -14,16 +14,16 @@ end
 
 "Bool change signal, true when input signal changes"
 function schange{T}(s_inp::Signal{T})
-  return lift(s -> s[1],
-              foldl(fsigchange, (false, s_inp.value), s_inp),
-              typ = Bool)
+  return map(s -> s[1],
+             foldp(fsigchange, (false, s_inp.value), s_inp),
+             typ = Bool)
 end
 
 """
-Buffer for storing previous signal values to be used with foldl when
+Buffer for storing previous signal values to be used with foldp when
 indicators are calculated based on signal history.
 
-**IMPORTANT**: Initial value supplied to `foldl` determines buffer window
+**IMPORTANT**: Initial value supplied to `foldp` determines buffer window
 size, i.e. how many past signal values are retained (rolling window
 size). In the case of e.g. SMA that would be moving average window.
 Specifying initial value may be tricky: see `test/signals.jl`.
