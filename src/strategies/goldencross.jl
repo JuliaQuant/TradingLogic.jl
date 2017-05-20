@@ -60,10 +60,10 @@ function goldencrosstarget(s_ohlc::Signal{OHLC},
     sighistbuffer!(buff, tohlc[2][ohlc_inds[:close]])
   pcloseinit = s_ohlc.value[2][ohlc_inds[:close]]
   s_sma_fast = map(mean,
-                   foldl(buffpclose!, initbuff(nsma_fast, pcloseinit), s_ohlc),
+                   foldp(buffpclose!, initbuff(nsma_fast, pcloseinit), s_ohlc),
                    typ=Float64)
   s_sma_slow = map(mean,
-                   foldl(buffpclose!, initbuff(nsma_slow, pcloseinit), s_ohlc),
+                   foldp(buffpclose!, initbuff(nsma_slow, pcloseinit), s_ohlc),
                    typ=Float64)
 
   # market state signal

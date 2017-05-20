@@ -20,7 +20,7 @@ facts("Working with signals") do
     [vsma[i] = mean(vval[(i-nsma+1):i]) for i = 10:100]
 
     s_inp = Reactive.Signal(vval[1])
-    s_sma = Reactive.map(mean, Reactive.foldl(
+    s_sma = Reactive.map(mean, Reactive.foldp(
                             TradingLogic.sighistbuffer!,
                             TradingLogic.initbuff(nsma, s_inp.value),
                             s_inp))
