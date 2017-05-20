@@ -85,8 +85,8 @@ function luxortarget(s_ohlc::Signal{OHLC},
   s_mktchg = schange(s_mktstate)
 
   # signals updating only when market state changes
-  s_mktchg_high = keepwhen(s_mktchg, s_high.value, s_high)
-  s_mktchg_low = keepwhen(s_mktchg, s_low.value, s_low)
+  s_mktchg_high = filterwhen(s_mktchg, s_high.value, s_high)
+  s_mktchg_low = filterwhen(s_mktchg, s_low.value, s_low)
 
   # target position updates only when market state input changes
   s_target = map((mks, h, l) -> luxorposlogic(mks, h, l,
